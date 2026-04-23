@@ -111,10 +111,9 @@ class TestNotionLoaderPage:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock()
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
-            with patch("httpx.Timeout"):
-                with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
-                    docs = await loader.load()
+        with patch("httpx.AsyncClient", return_value=mock_client), patch("httpx.Timeout"):
+            with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
+                docs = await loader.load()
 
         assert len(docs) == 1
         assert docs[0].text == "My Heading\nSome text content"
@@ -144,10 +143,9 @@ class TestNotionLoaderPage:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock()
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
-            with patch("httpx.Timeout"):
-                with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
-                    docs = await loader.load()
+        with patch("httpx.AsyncClient", return_value=mock_client), patch("httpx.Timeout"):
+            with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
+                docs = await loader.load()
 
         assert len(docs[0].metadata["headings"]) == 3
         assert docs[0].metadata["headings"] == ["Main Title", "Subtitle", "Sub-subtitle"]
@@ -173,10 +171,9 @@ class TestNotionLoaderPage:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock()
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
-            with patch("httpx.Timeout"):
-                with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
-                    docs = await loader.load()
+        with patch("httpx.AsyncClient", return_value=mock_client), patch("httpx.Timeout"):
+            with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
+                docs = await loader.load()
 
         expected_text = "Regular paragraph\nBullet point\nNumbered item\nTodo item\nprint('hello')"
         assert docs[0].text == expected_text
@@ -207,10 +204,9 @@ class TestNotionLoaderPage:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock()
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
-            with patch("httpx.Timeout"):
-                with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
-                    docs = await loader.load()
+        with patch("httpx.AsyncClient", return_value=mock_client), patch("httpx.Timeout"):
+            with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
+                docs = await loader.load()
 
         assert docs[0].text == "First block\nSecond block"
 
@@ -244,10 +240,9 @@ class TestNotionLoaderPage:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock()
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
-            with patch("httpx.Timeout"):
-                with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
-                    docs = await loader.load()
+        with patch("httpx.AsyncClient", return_value=mock_client), patch("httpx.Timeout"):
+            with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
+                docs = await loader.load()
 
         assert docs[0].text == "Parent\nChild"
 
@@ -264,10 +259,9 @@ class TestNotionLoaderPage:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock()
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
-            with patch("httpx.Timeout"):
-                with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
-                    docs = await loader.load()
+        with patch("httpx.AsyncClient", return_value=mock_client), patch("httpx.Timeout"):
+            with patch.object(loader, "_request_with_retry", side_effect=mock_retry):
+                docs = await loader.load()
 
         assert docs[0].metadata["title"] == "Untitled"
 
@@ -334,10 +328,9 @@ class TestNotionLoaderDatabase:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock()
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
-            with patch("httpx.Timeout"):
-                with patch.object(loader, "_request_with_retry", side_effect=mock_request):
-                    docs = await loader.load()
+        with patch("httpx.AsyncClient", return_value=mock_client), patch("httpx.Timeout"):
+            with patch.object(loader, "_request_with_retry", side_effect=mock_request):
+                docs = await loader.load()
 
         assert len(docs) == 2
         assert docs[0].text == "Content 1"
@@ -362,9 +355,8 @@ class TestNotionLoaderDatabase:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock()
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
-            with patch("httpx.Timeout"):
-                with patch.object(loader, "_request_with_retry", side_effect=mock_request):
-                    docs = await loader.load()
+        with patch("httpx.AsyncClient", return_value=mock_client), patch("httpx.Timeout"):
+            with patch.object(loader, "_request_with_retry", side_effect=mock_request):
+                docs = await loader.load()
 
         assert docs == []

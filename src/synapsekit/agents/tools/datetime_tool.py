@@ -52,10 +52,7 @@ class DateTimeTool(BaseTool):
     ) -> ToolResult:
         try:
             if action == "now":
-                if tz.lower() == "utc":
-                    now = datetime.now(UTC)
-                else:
-                    now = datetime.now()
+                now = datetime.now(UTC) if tz.lower() == "utc" else datetime.now()
                 if fmt:
                     return ToolResult(output=now.strftime(fmt))
                 return ToolResult(output=now.isoformat())
@@ -63,10 +60,7 @@ class DateTimeTool(BaseTool):
             elif action == "parse":
                 if not value:
                     return ToolResult(output="", error="No value provided to parse.")
-                if fmt:
-                    dt = datetime.strptime(value, fmt)
-                else:
-                    dt = datetime.fromisoformat(value)
+                dt = datetime.strptime(value, fmt) if fmt else datetime.fromisoformat(value)
                 return ToolResult(output=dt.isoformat())
 
             elif action == "format":

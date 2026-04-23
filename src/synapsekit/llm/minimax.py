@@ -79,10 +79,7 @@ class MinimaxLLM(BaseLLM):
             async for line in response.aiter_lines():
                 if not line:
                     continue
-                if line.startswith("data: "):
-                    data = line[len("data: ") :]
-                else:
-                    data = line
+                data = line[len("data: ") :] if line.startswith("data: ") else line
                 if data == "[DONE]":
                     break
                 try:

@@ -392,16 +392,18 @@ class TestGoogleDriveLoaderSync:
         mock_google = MagicMock()
         mock_googleapiclient = MagicMock()
 
-        with patch.dict(
-            "sys.modules",
-            {
-                "google": mock_google,
-                "google.oauth2": mock_google.oauth2,
-                "googleapiclient": mock_googleapiclient,
-                "googleapiclient.discovery": mock_googleapiclient.discovery,
-            },
+        with (
+            patch.dict(
+                "sys.modules",
+                {
+                    "google": mock_google,
+                    "google.oauth2": mock_google.oauth2,
+                    "googleapiclient": mock_googleapiclient,
+                    "googleapiclient.discovery": mock_googleapiclient.discovery,
+                },
+            ),
+            patch.object(loader, "aload", new=AsyncMock(return_value=expected)),
         ):
-            with patch.object(loader, "aload", new=AsyncMock(return_value=expected)):
-                result = loader.load()
+            result = loader.load()
 
         assert result == expected

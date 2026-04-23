@@ -135,10 +135,7 @@ class TeamsLoader:
                 # Retry for 429 (rate limit) or 5xx (server error)
                 if response.status_code == 429 or response.status_code >= 500:
                     retry_after = response.headers.get("Retry-After")
-                    if retry_after:
-                        delay = float(retry_after)
-                    else:
-                        delay = base_delay * (2**attempt)
+                    delay = float(retry_after) if retry_after else base_delay * 2**attempt
 
                     logger.warning(
                         "TeamsLoader: rate limited or server error (status %d), retrying in %.1fs (attempt %d/%d)",

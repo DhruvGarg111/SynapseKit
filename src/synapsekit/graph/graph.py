@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .edge import ConditionalEdge, ConditionFn, Edge
 from .errors import GraphConfigError
 from .node import Node, NodeFn
 from .state import END, TypedState
+
+if TYPE_CHECKING:
+    from .compiled import CompiledGraph
 
 MigrationResult = dict[str, Any] | tuple[str, dict[str, Any]]
 MigrationFn = Callable[[dict[str, Any]], MigrationResult | Awaitable[MigrationResult]]
@@ -149,4 +152,3 @@ class StateGraph:
 
 
 # Avoid circular import — import here so type checkers see it
-from .compiled import CompiledGraph  # noqa: E402

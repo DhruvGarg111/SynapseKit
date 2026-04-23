@@ -37,11 +37,21 @@ def tool(
         tool_desc = description or fn.__doc__ or f"{tool_name} tool"
         params = _build_params(fn)
         is_async = inspect.iscoroutinefunction(fn)
+        sig = inspect.signature(fn)
+        fn_param_names = [
+            param_name for param_name in sig.parameters if param_name not in ("self", "cls")
+        ]
 
         class _DynamicTool(BaseTool):
             async def run(self, **kwargs: Any) -> ToolResult:
                 try:
-                    result = fn(**kwargs) if not is_async else await fn(**kwargs)
+                    call_kwargs = kwargs
+                    if "input" in kwargs and "input" not in fn_param_names:
+                        if len(fn_param_names) == 1:
+                            call_kwargs = {fn_param_names[0]: kwargs["input"]}
+                        elif not fn_param_names:
+                            call_kwargs = {}
+                    result = fn(**call_kwargs) if not is_async else await fn(**call_kwargs)
                     return ToolResult(output=str(result))
                 except Exception as e:
                     return ToolResult(output="", error=str(e))

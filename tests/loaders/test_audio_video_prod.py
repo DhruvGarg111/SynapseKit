@@ -620,12 +620,14 @@ async def test_extract_audio_async_ffmpeg_not_found(tmp_path):
     video_file.write_bytes(b"fake")
     loader = VideoLoader(str(video_file))
 
-    with patch(
-        "synapsekit.loaders.video.asyncio.create_subprocess_exec",
-        side_effect=FileNotFoundError("ffmpeg not found"),
+    with (
+        patch(
+            "synapsekit.loaders.video.asyncio.create_subprocess_exec",
+            side_effect=FileNotFoundError("ffmpeg not found"),
+        ),
+        pytest.raises(RuntimeError, match="ffmpeg is required"),
     ):
-        with pytest.raises(RuntimeError, match="ffmpeg is required"):
-            await loader._extract_audio_async()
+        await loader._extract_audio_async()
 
 
 @pytest.mark.asyncio

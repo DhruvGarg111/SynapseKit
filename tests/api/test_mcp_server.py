@@ -56,12 +56,14 @@ def _mock_mcp_modules():
 @pytest.mark.asyncio
 async def test_run_sse_missing_mcp_raises():
     server = MCPServer()
-    with patch.dict(
-        sys.modules,
-        {"mcp": None, "mcp.server": None, "mcp.server.sse": None, "mcp.types": None},
+    with (
+        patch.dict(
+            sys.modules,
+            {"mcp": None, "mcp.server": None, "mcp.server.sse": None, "mcp.types": None},
+        ),
+        pytest.raises((ImportError, Exception)),
     ):
-        with pytest.raises((ImportError, Exception)):
-            await server.run_sse()
+        await server.run_sse()
 
 
 # ---------------------------------------------------------------------------

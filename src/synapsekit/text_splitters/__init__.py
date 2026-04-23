@@ -12,9 +12,9 @@ from .token import TokenAwareSplitter
 
 __all__ = [
     "BaseSplitter",
-    "HTMLTextSplitter",
     "CharacterTextSplitter",
     "CodeSplitter",
+    "HTMLTextSplitter",
     "JSONSplitter",
     "MarkdownTextSplitter",
     "RecursiveCharacterTextSplitter",

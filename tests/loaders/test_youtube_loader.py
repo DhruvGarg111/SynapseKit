@@ -275,12 +275,17 @@ def test_unexpected_error_raises_runtime_error() -> None:
     api.fetch.side_effect = ConnectionError("timeout")
     mock_lib.YouTubeTranscriptApi.return_value = api
 
-    with patch.dict(
-        "sys.modules",
-        {"youtube_transcript_api": mock_lib, "youtube_transcript_api._errors": mock_lib._errors},
+    with (
+        patch.dict(
+            "sys.modules",
+            {
+                "youtube_transcript_api": mock_lib,
+                "youtube_transcript_api._errors": mock_lib._errors,
+            },
+        ),
+        pytest.raises(RuntimeError, match="Failed to fetch transcript"),
     ):
-        with pytest.raises(RuntimeError, match="Failed to fetch transcript"):
-            YouTubeLoader(FAKE_ID).load()
+        YouTubeLoader(FAKE_ID).load()
 
 
 # ---------------------------------------------------------------------------

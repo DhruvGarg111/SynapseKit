@@ -129,10 +129,7 @@ class AWSLambdaTool(BaseTool):
         payload_stream = response.get("Payload")
         if payload_stream is not None:
             raw = payload_stream.read()
-            if isinstance(raw, bytes):
-                text = raw.decode("utf-8", errors="replace")
-            else:
-                text = str(raw)
+            text = raw.decode("utf-8", errors="replace") if isinstance(raw, bytes) else str(raw)
             text = text.strip()
             if text:
                 try:

@@ -130,10 +130,7 @@ class EvalRegression:
                     regressed = delta < thresh.get("score", -0.02)
                 else:
                     # Relative change
-                    if b_val > 0:
-                        relative = delta / b_val
-                    else:
-                        relative = 0.0
+                    relative = delta / b_val if b_val > 0 else 0.0
                     regressed = relative > thresh.get(metric, 0.10)
 
                 deltas.append(

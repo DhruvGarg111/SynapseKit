@@ -5,7 +5,7 @@ from .sqlite import SQLiteMemoryBackend
 
 __all__ = [
     "InMemoryMemoryBackend",
-    "SQLiteMemoryBackend",
-    "RedisMemoryBackend",
     "PostgresMemoryBackend",
+    "RedisMemoryBackend",
+    "SQLiteMemoryBackend",
 ]

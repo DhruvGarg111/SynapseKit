@@ -261,10 +261,7 @@ class NotionTool(BaseTool):
                         if text:
                             content_lines.append(text)
 
-            if not content_lines:
-                content_text = "(No content)"
-            else:
-                content_text = "\n".join(content_lines)
+            content_text = "(No content)" if not content_lines else "\n".join(content_lines)
 
             output = f"Title: {title}\n\nContent:\n{content_text}\n\nURL: {url}"
             return ToolResult(output=output)
