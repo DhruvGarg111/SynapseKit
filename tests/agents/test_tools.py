@@ -9,8 +9,10 @@ import pytest
 
 from synapsekit.agents.base import ToolResult
 from synapsekit.agents.tools.calculator import CalculatorTool
+from synapsekit.agents.tools.file_list import FileListTool
 from synapsekit.agents.tools.file_read import FileReadTool
 from synapsekit.agents.tools.image_analysis import ImageAnalysisTool
+from synapsekit.agents.tools.pdf_reader import PDFReaderTool
 from synapsekit.agents.tools.python_repl import PythonREPLTool
 from synapsekit.agents.tools.speech_to_text import SpeechToTextTool
 from synapsekit.agents.tools.sql_query import SQLQueryTool
@@ -261,6 +263,83 @@ class TestFileReadTool:
         f.write_text("héllo", encoding="utf-8")
         r = await FileReadTool().run(path=str(f), encoding="utf-8")
         assert "héllo" in r.output
+
+    @pytest.mark.asyncio
+    async def test_base_dir_permits_inside_path(self, tmp_path):
+        allowed = tmp_path / "ws"
+        allowed.mkdir()
+        f = allowed / "ok.txt"
+        f.write_text("permitted")
+        r = await FileReadTool(base_dir=str(allowed)).run(path=str(f))
+        assert not r.is_error
+        assert r.output == "permitted"
+
+    @pytest.mark.asyncio
+    async def test_base_dir_blocks_sibling_prefix_escape(self, tmp_path):
+        # Regression for the `str.startswith` confinement bypass: a sibling
+        # directory that shares a string prefix with base_dir ("ws" vs
+        # "ws-secret") must be rejected. The old startswith check let it through.
+        allowed = tmp_path / "ws"
+        allowed.mkdir()
+        sibling = tmp_path / "ws-secret"
+        sibling.mkdir()
+        secret = sibling / "creds.txt"
+        secret.write_text("TOP SECRET")
+        r = await FileReadTool(base_dir=str(allowed)).run(path=str(secret))
+        assert r.is_error
+        assert "Access denied" in r.error
+
+    @pytest.mark.asyncio
+    async def test_base_dir_blocks_parent_traversal(self, tmp_path):
+        allowed = tmp_path / "ws"
+        allowed.mkdir()
+        outside = tmp_path / "outside.txt"
+        outside.write_text("nope")
+        r = await FileReadTool(base_dir=str(allowed)).run(path=str(allowed / ".." / "outside.txt"))
+        assert r.is_error
+        assert "Access denied" in r.error
+
+
+# ------------------------------------------------------------------ #
+# FileListTool / PDFReaderTool optional confinement
+# ------------------------------------------------------------------ #
+
+
+class TestFileToolConfinement:
+    @pytest.mark.asyncio
+    async def test_file_list_blocks_outside_base_dir(self, tmp_path):
+        allowed = tmp_path / "ws"
+        allowed.mkdir()
+        (tmp_path / "ws-secret").mkdir()
+        r = await FileListTool(base_dir=str(allowed)).run(path=str(tmp_path / "ws-secret"))
+        assert r.is_error
+        assert "Access denied" in r.error
+
+    @pytest.mark.asyncio
+    async def test_file_list_permits_inside_base_dir(self, tmp_path):
+        allowed = tmp_path / "ws"
+        allowed.mkdir()
+        (allowed / "a.txt").write_text("x")
+        r = await FileListTool(base_dir=str(allowed)).run(path=str(allowed))
+        assert not r.is_error
+
+    @pytest.mark.asyncio
+    async def test_file_list_no_base_dir_unrestricted(self, tmp_path):
+        (tmp_path / "a.txt").write_text("x")
+        r = await FileListTool().run(path=str(tmp_path))
+        assert not r.is_error
+
+    @pytest.mark.asyncio
+    async def test_pdf_reader_blocks_outside_base_dir(self, tmp_path):
+        # Denial happens before the optional pypdf import, so this runs without
+        # the [pdf] extra installed.
+        allowed = tmp_path / "ws"
+        allowed.mkdir()
+        r = await PDFReaderTool(base_dir=str(allowed)).run(
+            file_path=str(tmp_path / "ws-secret" / "x.pdf")
+        )
+        assert r.is_error
+        assert "Access denied" in r.error
 
 
 # ------------------------------------------------------------------ #

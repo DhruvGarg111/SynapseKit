@@ -332,8 +332,11 @@ class TestAPIBuilderTool:
         mock_response.__enter__ = MagicMock(return_value=mock_response)
         mock_response.__exit__ = MagicMock(return_value=False)
 
+        # The fetch now goes through the SSRF-validating opener helper; patch it
+        # (example.com is public so it would pass the guard anyway). This test
+        # covers spec-loading logic, not the SSRF guard (see test_tools_ssrf.py).
         with patch(
-            "synapsekit.agents.tools.api_builder.urlopen",
+            "synapsekit.agents.tools.api_builder._open_validated",
             return_value=mock_response,
         ):
             result = await tool.run(

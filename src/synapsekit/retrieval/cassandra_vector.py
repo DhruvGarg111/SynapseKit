@@ -4,11 +4,28 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import uuid
 from functools import partial
 
 from ..embeddings.backend import SynapsekitEmbeddings
 from .base import VectorStore
+
+# CQL identifiers are interpolated into statements (keyspace/table names cannot
+# be bound as query parameters), so restrict them to a safe unquoted-identifier
+# charset. Every sibling SQL-backed store validates or escapes its identifiers;
+# this closes the same CQL-injection gap here (defense-in-depth — the values
+# are developer-controlled today).
+_CQL_IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _validate_identifier(value: str, label: str) -> str:
+    if not isinstance(value, str) or not _CQL_IDENTIFIER_RE.match(value):
+        raise ValueError(
+            f"Invalid Cassandra {label} {value!r}: must match "
+            f"[A-Za-z_][A-Za-z0-9_]* (letters, digits, underscore; no leading digit)."
+        )
+    return value
 
 
 class CassandraVectorStore(VectorStore):
@@ -29,8 +46,8 @@ class CassandraVectorStore(VectorStore):
         astra_token: str | None = None,
     ) -> None:
         self._embeddings = embedding_backend
-        self._keyspace = keyspace
-        self._table_name = table_name
+        self._keyspace = _validate_identifier(keyspace, "keyspace")
+        self._table_name = _validate_identifier(table_name, "table_name")
         self._table_created = False
         self._dim: int | None = None
         self._mode: str  # "astra" or "cassandra"

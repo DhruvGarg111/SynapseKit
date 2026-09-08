@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Any
 
+from ...loaders._url_guard import validate_public_url
 from ..base import BaseTool, ToolResult
 
 
@@ -55,6 +57,14 @@ class GraphQLTool(BaseTool):
         if not query:
             return ToolResult(output="", error="No GraphQL query provided.")
 
+        # SSRF guard (fail-closed): reject non-http(s) schemes and endpoints
+        # resolving to private/internal addresses before any request is made.
+        try:
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(None, validate_public_url, url)
+        except ValueError as e:
+            return ToolResult(output="", error=str(e))
+
         try:
             import aiohttp
         except ImportError:
@@ -85,7 +95,11 @@ class GraphQLTool(BaseTool):
         try:
             timeout = aiohttp.ClientTimeout(total=self._timeout)
             async with aiohttp.ClientSession(timeout=timeout) as session:
-                async with session.post(url, json=payload, headers=parsed_headers) as resp:
+                # Do not auto-follow redirects: a 3xx to an internal host would
+                # otherwise bypass the pre-request SSRF check above.
+                async with session.post(
+                    url, json=payload, headers=parsed_headers, allow_redirects=False
+                ) as resp:
                     if resp.status != 200:
                         text = await resp.text()
                         return ToolResult(output="", error=f"HTTP {resp.status}: {text}")

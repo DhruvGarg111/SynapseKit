@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Any
 
 from ..base import BaseTool, ToolResult
@@ -32,6 +33,9 @@ class FileListTool(BaseTool):
         "required": ["path"],
     }
 
+    def __init__(self, base_dir: str | None = None) -> None:
+        self._base_dir = Path(base_dir).resolve() if base_dir else None
+
     async def run(
         self,
         path: str = "",
@@ -40,6 +44,10 @@ class FileListTool(BaseTool):
         **kwargs: Any,
     ) -> ToolResult:
         path = path or kwargs.get("input", ".")
+        if self._base_dir is not None and not Path(path).resolve().is_relative_to(self._base_dir):
+            return ToolResult(
+                output="", error="Access denied: path is outside the allowed directory."
+            )
         if not os.path.isdir(path):
             return ToolResult(output="", error=f"Not a directory: {path!r}")
 

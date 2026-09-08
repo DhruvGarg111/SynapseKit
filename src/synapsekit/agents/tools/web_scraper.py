@@ -1,45 +1,25 @@
 from __future__ import annotations
 
 import asyncio
-import ipaddress
-import socket
 from typing import Any
-from urllib.parse import urlparse
 
+from ...loaders._url_guard import validate_public_url
 from ..base import BaseTool, ToolResult
 
-_PRIVATE_NETS = [
-    ipaddress.ip_network("10.0.0.0/8"),
-    ipaddress.ip_network("172.16.0.0/12"),
-    ipaddress.ip_network("192.168.0.0/16"),
-    ipaddress.ip_network("127.0.0.0/8"),
-    ipaddress.ip_network("169.254.0.0/16"),
-    ipaddress.ip_network("::1/128"),
-    ipaddress.ip_network("fc00::/7"),
-]
 _MAX_CSS_SELECTOR_LEN = 200
 
 
 async def _validate_url(url: str) -> None:
     """Validate URL scheme and guard against SSRF to private networks.
 
-    The DNS lookup is offloaded to the thread-pool executor so it never
-    blocks the asyncio event loop.
+    Delegates to the shared, fail-closed SSRF guard (``loaders._url_guard``)
+    used by the web/sitemap loaders. This replaces a bespoke check that failed
+    **open** on DNS-resolution errors and only inspected the first IPv4 address.
+    The blocking DNS lookup is offloaded to a thread so it never blocks the
+    event loop.
     """
-    parsed = urlparse(url)
-    if parsed.scheme not in ("http", "https"):
-        raise ValueError(f"URL scheme {parsed.scheme!r} is not allowed; use http or https.")
-    host = parsed.hostname or ""
-    if not host:
-        raise ValueError("URL has no hostname.")
-    try:
-        loop = asyncio.get_running_loop()
-        resolved = await loop.run_in_executor(None, socket.gethostbyname, host)
-        addr = ipaddress.ip_address(resolved)
-    except (socket.gaierror, ValueError):
-        return
-    if any(addr in net for net in _PRIVATE_NETS):
-        raise ValueError(f"Requests to private/internal addresses are not allowed: {host!r}")
+    loop = asyncio.get_running_loop()
+    await loop.run_in_executor(None, validate_public_url, url)
 
 
 class WebScraperTool(BaseTool):

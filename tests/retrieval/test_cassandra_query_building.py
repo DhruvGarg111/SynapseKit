@@ -91,6 +91,40 @@ def test_metadata_filter_still_applied_to_rows():
     assert [r["text"] for r in results] == ["keep"]
 
 
+class TestIdentifierValidation:
+    """#1026: keyspace/table names are interpolated into CQL (they can't be
+    bound), so they must be validated to a safe identifier charset. Validation
+    runs before any driver import, so these need no astrapy/cassandra-driver."""
+
+    @pytest.mark.parametrize(
+        "keyspace",
+        [
+            'ks"; DROP KEYSPACE x; --',
+            "ks; SELECT",
+            "ks space",
+            "ks-dash",
+            "1leading_digit",
+            "",
+            "ks.other",
+        ],
+    )
+    def test_malicious_keyspace_rejected(self, keyspace):
+        with pytest.raises(ValueError, match="Invalid Cassandra keyspace"):
+            CassandraVectorStore(embedding_backend=object(), keyspace=keyspace)
+
+    @pytest.mark.parametrize("table", ["t;DROP", "t space", "t-dash", "1t", "t.x"])
+    def test_malicious_table_rejected(self, table):
+        with pytest.raises(ValueError, match="Invalid Cassandra table_name"):
+            CassandraVectorStore(embedding_backend=object(), keyspace="ks_ok", table_name=table)
+
+    def test_valid_identifiers_pass_validation(self):
+        from synapsekit.retrieval.cassandra_vector import _validate_identifier
+
+        assert _validate_identifier("synapsekit_vec", "table_name") == "synapsekit_vec"
+        assert _validate_identifier("KeySpace_1", "keyspace") == "KeySpace_1"
+        assert _validate_identifier("_private", "keyspace") == "_private"
+
+
 def test_cassandra_extra_declares_astrapy():
     """#789: the [cassandra] extra must include astrapy so the astra path's
     ImportError message ('pip install synapsekit[cassandra]') is accurate."""

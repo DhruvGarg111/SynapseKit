@@ -333,6 +333,22 @@ class TestFileWriteTool:
         assert result.error is None
 
     @pytest.mark.asyncio
+    async def test_base_dir_blocks_sibling_prefix_escape(self, tmp_path):
+        # Regression for the `str.startswith` confinement bypass: writing to a
+        # sibling dir that shares a string prefix with base_dir ("ws" vs
+        # "ws-secret") must be denied and must not create the file. The old
+        # startswith check allowed this arbitrary out-of-sandbox write.
+        allowed_dir = tmp_path / "ws"
+        allowed_dir.mkdir()
+        escape_path = tmp_path / "ws-secret" / "planted.txt"
+        result = await FileWriteTool(base_dir=str(allowed_dir)).run(
+            path=str(escape_path), content="bad"
+        )
+        assert result.error is not None
+        assert "Access denied" in result.error
+        assert not escape_path.exists()
+
+    @pytest.mark.asyncio
     async def test_overwrite_existing_file(self, tmp_path):
         tool = FileWriteTool()
         fpath = str(tmp_path / "file.txt")
@@ -367,7 +383,7 @@ class TestHTTPRequestTool:
         mock_aiohttp.ClientTimeout = MagicMock(return_value=MagicMock())
 
         with patch.dict(sys.modules, {"aiohttp": mock_aiohttp}):
-            result = await tool.run(url="https://example.com")
+            result = await tool.run(url="https://93.184.216.34")
 
         assert result.error is None
         assert "200" in result.output
@@ -400,7 +416,7 @@ class TestHTTPRequestTool:
         mock_aiohttp.ClientTimeout = MagicMock(return_value=MagicMock())
 
         with patch.dict(sys.modules, {"aiohttp": mock_aiohttp}):
-            result = await tool.run(url="https://example.com")
+            result = await tool.run(url="https://93.184.216.34")
 
         assert "truncated" in result.output
 
@@ -409,7 +425,7 @@ class TestHTTPRequestTool:
         tool = HTTPRequestTool()
         with patch.dict(sys.modules, {"aiohttp": None}):
             with pytest.raises(ImportError, match="aiohttp required"):
-                await tool.run(url="https://example.com")
+                await tool.run(url="https://93.184.216.34")
 
     @pytest.mark.asyncio
     async def test_network_exception_returns_error(self):
@@ -425,7 +441,10 @@ class TestHTTPRequestTool:
         mock_aiohttp.ClientSession = MagicMock(return_value=mock_session)
 
         with patch.dict(sys.modules, {"aiohttp": mock_aiohttp}):
-            result = await tool.run(url="https://bad.example.com")
+            # A public IP literal passes the SSRF guard without any DNS lookup,
+            # so the mocked transport raises the network error under test and
+            # the test stays hermetic (no network access).
+            result = await tool.run(url="https://93.184.216.34")
 
         assert result.error is not None
         assert "failed" in result.error.lower()
@@ -456,7 +475,7 @@ class TestHTTPRequestTool:
         mock_aiohttp.ClientTimeout = MagicMock(return_value=MagicMock())
 
         with patch.dict(sys.modules, {"aiohttp": mock_aiohttp}):
-            await tool.run(url="https://api.example.com", method="POST", body='{"key":"val"}')
+            await tool.run(url="https://93.184.216.34", method="POST", body='{"key":"val"}')
 
         assert captured["method"] == "POST"
         assert captured["data"] == '{"key":"val"}'
