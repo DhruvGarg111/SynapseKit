@@ -634,6 +634,19 @@ wheels = [
 ]
 
 [[package]]
+name = "azure-cosmos"
+version = "4.16.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "azure-core" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6d/8a/97b68e849fff7d2a76d85e51acdfbd13072266d581dcb7f6ad32bdddbd27/azure_cosmos-4.16.4.tar.gz", hash = "sha256:5a98d33ce6d539a926f47c67b14587fbb8ba4fd662751ff8b0ebe7f9d3765a2e", size = 2462258, upload-time = "2026-09-02T14:59:54.322Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e0/cc/5f4b06f49ec0bf26e8a390fb55c67ceb67573e94e83493b6b96837b2ee98/azure_cosmos-4.16.4-py3-none-any.whl", hash = "sha256:89bf558203335efc39551dccef6782aa2f286d94cc87dd9bd98efc37d8c69303", size = 502464, upload-time = "2026-09-02T14:59:56.414Z" },
+]
+
+[[package]]
 name = "azure-search-documents"
 version = "12.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2354,6 +2367,23 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a8/dd/1eef226e470369b26824a505c34482c0b493bc35fe8e0c6b003b5feca21a/google_cloud_core-2.6.0.tar.gz", hash = "sha256:e76149739f90fac1fc6757c09f47eaccb3145b54adbd7759b0f7c4b235f46c83", size = 36001, upload-time = "2026-05-07T08:04:04.124Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/84/4a/98da8930ab109c73d9a5d13782a9ebb81ea8c111f6d534a567b71d23e52b/google_cloud_core-2.6.0-py3-none-any.whl", hash = "sha256:6d63ac8e5eca6d9e4319d0a1e2265fadcd7f1049904378caecfa01cf52dd869e", size = 29390, upload-time = "2026-05-07T08:02:34.672Z" },
+]
+
+[[package]]
+name = "google-cloud-firestore"
+version = "2.27.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "google-api-core", extra = ["grpc"] },
+    { name = "google-auth" },
+    { name = "google-cloud-core" },
+    { name = "grpcio" },
+    { name = "proto-plus" },
+    { name = "protobuf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4c/83/bdfd4387fadc5f44de1d0f97b456c648b6f87ec0b1818a9f7f477e6e6eab/google_cloud_firestore-2.27.0.tar.gz", hash = "sha256:5633cb164ef56ca6c73a807822191a56a98f6f10e76978c4f2eb197ae03383d2", size = 649244, upload-time = "2026-04-13T22:55:43.931Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6d/db/fc72c4279887cc95011f16e70200d021030f0261e6391fa52e3adfaaea25/google_cloud_firestore-2.27.0-py3-none-any.whl", hash = "sha256:cc2ea78bc2d4dcc928016d56802deacfda3c9bbda0a7d691ee73b41a2f1a80d7", size = 429806, upload-time = "2026-04-13T22:55:41.726Z" },
 ]
 
 [[package]]
@@ -10164,6 +10194,7 @@ all = [
     { name = "astrapy" },
     { name = "asyncpg" },
     { name = "atlassian-python-api" },
+    { name = "azure-cosmos" },
     { name = "azure-search-documents" },
     { name = "azure-storage-blob" },
     { name = "beautifulsoup4" },
@@ -10189,6 +10220,7 @@ all = [
     { name = "google-auth" },
     { name = "google-cloud-aiplatform" },
     { name = "google-cloud-bigquery" },
+    { name = "google-cloud-firestore" },
     { name = "google-genai" },
     { name = "google-generativeai" },
     { name = "google-search-results" },
@@ -10302,6 +10334,9 @@ confluence = [
     { name = "atlassian-python-api" },
     { name = "beautifulsoup4" },
 ]
+cosmos = [
+    { name = "azure-cosmos" },
+]
 couchbase = [
     { name = "couchbase" },
 ]
@@ -10348,6 +10383,9 @@ excel = [
 ]
 faiss = [
     { name = "faiss-cpu" },
+]
+firestore = [
+    { name = "google-cloud-firestore" },
 ]
 friendli = [
     { name = "openai" },
@@ -10710,11 +10748,13 @@ dev = [
 ]
 integration = [
     { name = "asyncpg" },
+    { name = "azure-cosmos" },
     { name = "azure-storage-blob" },
     { name = "boto3" },
     { name = "cassandra-driver" },
     { name = "clickhouse-connect" },
     { name = "elasticsearch" },
+    { name = "google-cloud-firestore" },
     { name = "kuzu" },
     { name = "milvus-lite" },
     { name = "neo4j" },
@@ -10750,6 +10790,8 @@ requires-dist = [
     { name = "asyncpg", marker = "extra == 'postgres'", specifier = ">=0.29" },
     { name = "atlassian-python-api", marker = "extra == 'all'", specifier = ">=3.0" },
     { name = "atlassian-python-api", marker = "extra == 'confluence'", specifier = ">=3.0" },
+    { name = "azure-cosmos", marker = "extra == 'all'", specifier = ">=4.0" },
+    { name = "azure-cosmos", marker = "extra == 'cosmos'", specifier = ">=4.0" },
     { name = "azure-search-documents", marker = "extra == 'all'", specifier = ">=11.4" },
     { name = "azure-search-documents", marker = "extra == 'azure-ai-search'", specifier = ">=11.4" },
     { name = "azure-storage-blob", marker = "extra == 'all'", specifier = ">=12.0" },
@@ -10818,6 +10860,8 @@ requires-dist = [
     { name = "google-cloud-aiplatform", marker = "extra == 'vertex-vector'", specifier = ">=1.38" },
     { name = "google-cloud-bigquery", marker = "extra == 'all'", specifier = ">=3.0" },
     { name = "google-cloud-bigquery", marker = "extra == 'bigquery'", specifier = ">=3.0" },
+    { name = "google-cloud-firestore", marker = "extra == 'all'", specifier = ">=2.13" },
+    { name = "google-cloud-firestore", marker = "extra == 'firestore'", specifier = ">=2.13" },
     { name = "google-cloud-storage", marker = "extra == 'gcs'", specifier = ">=2.0" },
     { name = "google-genai", marker = "extra == 'all'", specifier = ">=1.0" },
     { name = "google-genai", marker = "extra == 'gemini'", specifier = ">=1.0" },
@@ -10997,7 +11041,7 @@ requires-dist = [
     { name = "youtube-transcript-api", marker = "extra == 'youtube-transcript'", specifier = ">=0.6" },
     { name = "z3-solver", marker = "extra == 'symbolic'", specifier = ">=4.13" },
 ]
-provides-extras = ["graph", "openai", "nvidia-nim", "watsonx", "snowflake-cortex", "deepinfra", "nebius", "baseten", "upstage", "reka", "hyperbolic", "friendli", "clarifai", "anthropic", "semantic", "colbert", "pdf", "wikipedia", "arxiv", "html", "web", "chroma", "faiss", "qdrant", "pinecone", "weaviate", "milvus", "lancedb", "sqlite-vec", "kuzu", "mesh", "cassandra", "clickhouse", "turbopuffer", "azure-ai-search", "vertex-vector", "singlestore", "tidb", "couchbase", "surrealdb", "deeplake", "myscale", "duckdb-vector", "marqo", "opensearch", "vespa", "replicate", "ollama", "lmstudio", "vllm", "ai21", "cohere", "mistral", "gemini", "voyage", "jina", "nomic", "mixedbread", "bedrock", "gcal-tool", "aws-lambda", "rss", "groq", "audio", "video", "voice", "voice-local", "voice-stream", "voice-piper", "voice-cartesia", "voice-elevenlabs", "voice-deepgram", "voice-silero", "training", "cron", "ambient", "excel", "pptx", "docx", "yaml", "okf", "teams", "http", "search", "huggingface", "transformers", "tiktoken", "google-search", "tavily", "youtube", "mcp", "redis", "memcached", "vertex", "cloudflare", "aleph-alpha", "llamacpp", "gpt4all", "onnx", "mlx", "edge", "ernie", "minimax", "serve", "hive", "graph-ui", "observe", "postgres", "pgvector", "wolfram", "dynamodb", "discord", "gcs", "bigquery", "gdrive", "git", "gsheets", "jira", "hubspot", "sql", "snowflake", "mongodb", "mongodb-vector", "salesforce", "azure", "s3", "onedrive", "slack", "supabase", "notion", "confluence", "dropbox", "symbolic", "rtf", "epub", "parquet", "elasticsearch", "browser", "computer-use", "youtube-transcript", "airtable", "performance", "all"]
+provides-extras = ["graph", "openai", "nvidia-nim", "watsonx", "snowflake-cortex", "deepinfra", "nebius", "baseten", "upstage", "reka", "hyperbolic", "friendli", "clarifai", "anthropic", "semantic", "colbert", "pdf", "wikipedia", "arxiv", "html", "web", "chroma", "faiss", "qdrant", "pinecone", "weaviate", "milvus", "lancedb", "sqlite-vec", "kuzu", "mesh", "cassandra", "firestore", "cosmos", "clickhouse", "turbopuffer", "azure-ai-search", "vertex-vector", "singlestore", "tidb", "couchbase", "surrealdb", "deeplake", "myscale", "duckdb-vector", "marqo", "opensearch", "vespa", "replicate", "ollama", "lmstudio", "vllm", "ai21", "cohere", "mistral", "gemini", "voyage", "jina", "nomic", "mixedbread", "bedrock", "gcal-tool", "aws-lambda", "rss", "groq", "audio", "video", "voice", "voice-local", "voice-stream", "voice-piper", "voice-cartesia", "voice-elevenlabs", "voice-deepgram", "voice-silero", "training", "cron", "ambient", "excel", "pptx", "docx", "yaml", "okf", "teams", "http", "search", "huggingface", "transformers", "tiktoken", "google-search", "tavily", "youtube", "mcp", "redis", "memcached", "vertex", "cloudflare", "aleph-alpha", "llamacpp", "gpt4all", "onnx", "mlx", "edge", "ernie", "minimax", "serve", "hive", "graph-ui", "observe", "postgres", "pgvector", "wolfram", "dynamodb", "discord", "gcs", "bigquery", "gdrive", "git", "gsheets", "jira", "hubspot", "sql", "snowflake", "mongodb", "mongodb-vector", "salesforce", "azure", "s3", "onedrive", "slack", "supabase", "notion", "confluence", "dropbox", "symbolic", "rtf", "epub", "parquet", "elasticsearch", "browser", "computer-use", "youtube-transcript", "airtable", "performance", "all"]
 
 [package.metadata.requires-dev]
 bench = [
@@ -11028,11 +11072,13 @@ dev = [
 ]
 integration = [
     { name = "asyncpg", specifier = ">=0.29" },
+    { name = "azure-cosmos", specifier = ">=4.0" },
     { name = "azure-storage-blob", specifier = ">=12.0,<12.20" },
     { name = "boto3", specifier = ">=1.26" },
     { name = "cassandra-driver", specifier = ">=3.28" },
     { name = "clickhouse-connect", specifier = ">=0.7" },
     { name = "elasticsearch", specifier = ">=8.0,<9" },
+    { name = "google-cloud-firestore", specifier = ">=2.13" },
     { name = "kuzu", specifier = ">=0.8" },
     { name = "milvus-lite", specifier = ">=2.4" },
     { name = "neo4j", specifier = ">=5.0" },

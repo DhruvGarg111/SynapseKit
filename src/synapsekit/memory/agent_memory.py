@@ -38,6 +38,7 @@ class AgentMemory:
         redis_url: str = "redis://localhost:6379",
         postgres_dsn: str | None = None,
         store: PropertyGraphBackend | None = None,
+        backend_options: dict[str, Any] | None = None,
         embedder: EmbedderFn | None = None,
         llm: Any | None = None,
         max_episodes: int = 100,
@@ -49,6 +50,7 @@ class AgentMemory:
             redis_url=redis_url,
             postgres_dsn=postgres_dsn,
             graph_store=store,
+            backend_options=backend_options,
         )
         self._embedder = embedder
         self._llm = llm
@@ -63,6 +65,7 @@ class AgentMemory:
         redis_url: str,
         postgres_dsn: str | None,
         graph_store: PropertyGraphBackend | None,
+        backend_options: dict[str, Any] | None,
     ) -> BaseMemoryBackend:
         if isinstance(backend, BaseMemoryBackend):
             return backend
@@ -78,6 +81,27 @@ class AgentMemory:
             return PostgresMemoryBackend(postgres_dsn)
         if backend == "graph":
             return GraphMemoryBackend(graph_store)
+        options = dict(backend_options or {})
+        if backend in {"mongodb", "mongo"}:
+            from .backends.mongodb import MongoDBMemoryBackend
+
+            return MongoDBMemoryBackend(**options)
+        if backend in {"cassandra", "scylla"}:
+            from .backends.cassandra import CassandraMemoryBackend
+
+            return CassandraMemoryBackend(**options)
+        if backend == "dynamodb":
+            from .backends.dynamodb import DynamoDBMemoryBackend
+
+            return DynamoDBMemoryBackend(**options)
+        if backend == "firestore":
+            from .backends.firestore import FirestoreMemoryBackend
+
+            return FirestoreMemoryBackend(**options)
+        if backend in {"cosmos", "cosmosdb"}:
+            from .backends.cosmos import CosmosDBMemoryBackend
+
+            return CosmosDBMemoryBackend(**options)
         raise ValueError(f"Unknown backend: {backend!r}")
 
     @staticmethod

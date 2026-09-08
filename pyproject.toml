@@ -93,6 +93,8 @@ sqlite-vec = ["sqlite-vec>=0.1"]
 kuzu = ["kuzu>=0.8"]
 mesh = ["sqlite-vec>=0.1", "kuzu>=0.8"]
 cassandra = ["astrapy>=1.0", "cassandra-driver>=3.28"]
+firestore = ["google-cloud-firestore>=2.13"]
+cosmos = ["azure-cosmos>=4.0"]
 clickhouse = ["clickhouse-connect>=0.7"]
 turbopuffer = ["turbopuffer>=0.1"]
 azure-ai-search = ["azure-search-documents>=11.4"]
@@ -268,6 +270,8 @@ all = [
     "hubspot-api-client>=8.0",
     "supabase>=2.0",
     "pymongo>=4.0",
+    "google-cloud-firestore>=2.13",
+    "azure-cosmos>=4.0",
     "simple-salesforce>=1.12",
     "azure-storage-blob>=12.0",
     "elasticsearch>=8.0",
@@ -342,6 +346,8 @@ integration = [
     "redis>=5.0",
     "elasticsearch>=8.0,<9",
     "pymongo>=4.0",
+    "google-cloud-firestore>=2.13",
+    "azure-cosmos>=4.0",
     "qdrant-client>=1.9",
     "weaviate-client>=4.0",
     "pymilvus>=2.4",
@@ -537,6 +543,7 @@ google-generativeai = "google"
 google-genai = "google"
 google-cloud-storage = "google"
 google-cloud-bigquery = "google"
+google-cloud-firestore = "google.cloud.firestore_v1"
 google-api-python-client = "googleapiclient"
 google-auth = "google"
 beautifulsoup4 = "bs4"
@@ -555,6 +562,7 @@ gitpython = "git"
 simple-salesforce = "simple_salesforce"
 hubspot-api-client = "hubspot"
 azure-storage-blob = "azure"
+azure-cosmos = "azure.cosmos"
 turbopuffer = "turbopuffer"
 azure-search-documents = "azure"
 sqlite-vec = "sqlite_vec"
@@ -566,6 +574,6 @@ snowflake-connector-python = "snowflake"
 
 [tool.deptry.per_rule_ignores]
 DEP001 = ["sqlalchemy", "pydantic", "aiohttp", "opentelemetry", "whisper", "botocore", "aiomcache", "nest_asyncio", "huggingface_hub", "serpapi", "weaviate", "uvicorn", "starlette", "tomli", "pyttsx3", "faster_whisper", "sounddevice", "soundfile", "aiokafka", "kafka", "typesense", "prometheus_client", "sentence_transformers", "llama_cpp", "ragatouille", "torch", "httpx", "google-genai"]
-DEP002 = ["numpy", "rank-bm25", "beautifulsoup4", "lxml", "pillow", "pyasn1", "httplib2", "faiss-cpu", "google-generativeai", "tavily-python", "youtube-search-python", "psycopg", "google-search-results", "discord.py", "google-auth", "weaviate-client", "pymilvus", "lancedb", "pgvector", "slack-sdk", "supabase", "pymongo", "azure-storage-blob", "elasticsearch", "tzdata", "torchaudio", "python-multipart", "z3-solver", "pyautogui"]
+DEP002 = ["numpy", "rank-bm25", "beautifulsoup4", "lxml", "pillow", "pyasn1", "httplib2", "faiss-cpu", "google-generativeai", "tavily-python", "youtube-search-python", "psycopg", "google-search-results", "discord.py", "google-auth", "weaviate-client", "pymilvus", "lancedb", "pgvector", "slack-sdk", "supabase", "pymongo", "azure-storage-blob", "azure-cosmos", "google-cloud-firestore", "elasticsearch", "tzdata", "torchaudio", "python-multipart", "z3-solver", "pyautogui"]
 DEP003 = ["sqlalchemy", "botocore", "nest_asyncio", "opentelemetry", "starlette", "uvicorn", "tomli", "torch"]
 DEP004 = ["pydantic"]
