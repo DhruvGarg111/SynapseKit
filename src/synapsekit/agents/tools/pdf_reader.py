@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from ..base import BaseTool, ToolResult
@@ -30,6 +31,9 @@ class PDFReaderTool(BaseTool):
         "required": ["file_path"],
     }
 
+    def __init__(self, base_dir: str | None = None) -> None:
+        self._base_dir = Path(base_dir).resolve() if base_dir else None
+
     async def run(
         self,
         file_path: str = "",
@@ -39,6 +43,13 @@ class PDFReaderTool(BaseTool):
         file_path = file_path or kwargs.get("input", "")
         if not file_path:
             return ToolResult(output="", error="No file path provided.")
+
+        if self._base_dir is not None and not Path(file_path).resolve().is_relative_to(
+            self._base_dir
+        ):
+            return ToolResult(
+                output="", error="Access denied: path is outside the allowed directory."
+            )
 
         try:
             from pypdf import PdfReader

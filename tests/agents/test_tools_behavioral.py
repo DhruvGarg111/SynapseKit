@@ -333,6 +333,22 @@ class TestFileWriteTool:
         assert result.error is None
 
     @pytest.mark.asyncio
+    async def test_base_dir_blocks_sibling_prefix_escape(self, tmp_path):
+        # Regression for the `str.startswith` confinement bypass: writing to a
+        # sibling dir that shares a string prefix with base_dir ("ws" vs
+        # "ws-secret") must be denied and must not create the file. The old
+        # startswith check allowed this arbitrary out-of-sandbox write.
+        allowed_dir = tmp_path / "ws"
+        allowed_dir.mkdir()
+        escape_path = tmp_path / "ws-secret" / "planted.txt"
+        result = await FileWriteTool(base_dir=str(allowed_dir)).run(
+            path=str(escape_path), content="bad"
+        )
+        assert result.error is not None
+        assert "Access denied" in result.error
+        assert not escape_path.exists()
+
+    @pytest.mark.asyncio
     async def test_overwrite_existing_file(self, tmp_path):
         tool = FileWriteTool()
         fpath = str(tmp_path / "file.txt")
