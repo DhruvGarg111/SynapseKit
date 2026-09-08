@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+from urllib.parse import urlparse
 
+from ._url_guard import validate_public_url
 from .base import Document
 
 
@@ -11,7 +13,23 @@ class RSSLoader:
     def __init__(self, url: str) -> None:
         self._url = url
 
+    def _validate(self) -> None:
+        """SSRF guard for remote feeds, without breaking local-file usage.
+
+        ``feedparser.parse`` happily accepts ``file://`` URLs (local file read)
+        and can be pointed at internal HTTP services. For ``http(s)`` URLs we
+        run the shared fail-closed SSRF guard; any other explicit scheme
+        (``file``, ``ftp``, ...) is rejected. A bare path or inline XML string
+        (no scheme) is still allowed so existing local usage keeps working.
+        """
+        scheme = urlparse(self._url).scheme.lower()
+        if scheme in ("http", "https"):
+            validate_public_url(self._url)
+        elif scheme:
+            raise ValueError(f"RSS URL scheme {scheme!r} is not allowed; use http or https.")
+
     def load(self) -> list[Document]:
+        self._validate()
         try:
             import feedparser
         except ImportError:

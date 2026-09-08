@@ -5,9 +5,29 @@ import re
 from collections.abc import Iterable
 from typing import Any, cast
 from urllib.parse import urlencode, urljoin
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from ...loaders._url_guard import assert_response_url_public, validate_public_url
 from ..base import BaseTool, ToolResult
+
+
+class _ValidatingRedirectHandler(HTTPRedirectHandler):
+    """Re-validate every redirect target against the SSRF guard before following.
+
+    ``urllib`` follows redirects automatically; without this, a public spec/API
+    URL could 3xx to ``http://169.254.169.254/`` or an internal host.
+    """
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):  # type: ignore[no-untyped-def]
+        assert_response_url_public(newurl)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def _open_validated(request: Request, timeout: int) -> Any:
+    """Validate the target URL (fail-closed) then open with hop re-validation."""
+    validate_public_url(request.full_url)
+    opener = build_opener(_ValidatingRedirectHandler())
+    return opener.open(request, timeout=timeout)
 
 
 class APIBuilderTool(BaseTool):
@@ -127,7 +147,7 @@ class APIBuilderTool(BaseTool):
         request = Request(spec_url, headers={"Accept": "application/json"})
 
         def _fetch() -> dict[str, Any]:
-            with urlopen(request, timeout=self._timeout) as resp:
+            with _open_validated(request, self._timeout) as resp:
                 payload = resp.read().decode("utf-8")
             return cast(dict[str, Any], json.loads(payload))
 
@@ -306,7 +326,7 @@ class APIBuilderTool(BaseTool):
         import asyncio
 
         def _fetch() -> str:
-            with urlopen(request, timeout=self._timeout) as resp:
+            with _open_validated(request, self._timeout) as resp:
                 status = getattr(resp, "status", 200)
                 text = resp.read().decode("utf-8", errors="replace")
             if text.strip():

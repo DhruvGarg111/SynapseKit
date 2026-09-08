@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+import asyncio
 from typing import Any
+from urllib.parse import urljoin
 
+from ...loaders._url_guard import assert_response_url_public
 from ..base import BaseTool, ToolResult
+
+_REDIRECT_CODES = frozenset({301, 302, 303, 307, 308})
+_MAX_REDIRECTS = 10
 
 
 class HTTPRequestTool(BaseTool):
@@ -89,20 +95,46 @@ class HTTPRequestTool(BaseTool):
 
         method = method.upper()
         req_headers = headers or {}
+        loop = asyncio.get_running_loop()
+
+        # Validate the initial URL against the SSRF guard (fail-closed) before
+        # doing anything else — this also rejects a bad URL without needing the
+        # aiohttp client. Without this, an LLM-supplied URL — or a redirect from
+        # a public host — could reach 169.254.169.254, 127.0.0.1, an internal
+        # service, or a file:// target.
+        try:
+            await loop.run_in_executor(None, assert_response_url_public, url)
+        except ValueError as e:
+            # SSRFValidationError subclasses ValueError.
+            return ToolResult(output="", error=str(e))
 
         # _get_session raises ImportError if aiohttp is missing — let it propagate
         session = await self._get_session()
 
         try:
-            req_kwargs: dict[str, Any] = {"headers": req_headers}
+            # Disable aiohttp's automatic redirect following and follow manually
+            # so every hop is re-validated against the SSRF guard.
+            req_kwargs: dict[str, Any] = {"headers": req_headers, "allow_redirects": False}
             if method in ("POST", "PUT", "PATCH") and body:
                 req_kwargs["data"] = body
 
-            async with session.request(method, url, **req_kwargs) as resp:
-                status = resp.status
-                text = await resp.text()
-                if len(text) > self._max_length:
-                    text = text[: self._max_length] + "\n... (truncated)"
-                return ToolResult(output=f"HTTP {status}\n{text}")
+            current = url
+            for _ in range(_MAX_REDIRECTS + 1):
+                # The guard resolves DNS (blocking); offload off the event loop.
+                await loop.run_in_executor(None, assert_response_url_public, current)
+                async with session.request(method, current, **req_kwargs) as resp:
+                    location = resp.headers.get("Location")
+                    if resp.status in _REDIRECT_CODES and location:
+                        current = urljoin(current, location)
+                        continue
+                    status = resp.status
+                    text = await resp.text()
+                    if len(text) > self._max_length:
+                        text = text[: self._max_length] + "\n... (truncated)"
+                    return ToolResult(output=f"HTTP {status}\n{text}")
+            return ToolResult(output="", error="Too many redirects.")
+        except ValueError as e:
+            # SSRFValidationError subclasses ValueError.
+            return ToolResult(output="", error=str(e))
         except Exception as e:
             return ToolResult(output="", error=f"HTTP request failed: {e}")
