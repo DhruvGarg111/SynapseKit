@@ -6,8 +6,11 @@ import asyncio
 import json
 from types import SimpleNamespace
 
+import pytest
+
 from synapsekit.computer_use.agent import ComputerUseAgent
 from synapsekit.computer_use.types import ComputerAction, ComputerActionType, ComputerObservation
+from synapsekit.sandbox.backends.base import run_process
 from synapsekit.sandbox.backends.docker import DockerBackend
 from synapsekit.sandbox.backends.fake import FakeBackend
 from synapsekit.sandbox.backends.firecracker import FirecrackerBackend
@@ -185,3 +188,52 @@ def test_apply_rolls_back_when_a_later_operation_is_invalid(tmp_path) -> None:
 
     asyncio.run(scenario())
     assert not (root / "one.txt").exists()
+
+
+def test_run_process_bounds_unbounded_output_and_truncates() -> None:
+    async def scenario() -> None:
+        cmd = [
+            "python",
+            "-c",
+            "import sys, time; sys.stdout.write('x' * 10000); sys.stdout.flush(); time.sleep(10)",
+        ]
+        result = await run_process(cmd, timeout=5.0, max_output_bytes=100)
+        assert not result.ok
+        assert len(result.stdout) <= 100 + len("\n[output truncated]")
+        assert "[output truncated]" in result.stdout
+
+    asyncio.run(scenario())
+
+
+def test_run_process_validates_max_output_bytes() -> None:
+    async def scenario() -> None:
+        with pytest.raises(ValueError, match="max_output_bytes must be positive"):
+            await run_process(["python", "-c", "print(1)"], max_output_bytes=0)
+
+    asyncio.run(scenario())
+
+
+def test_sandbox_config_validates_max_output_bytes() -> None:
+    config = SandboxConfig()
+    assert config.max_output_bytes == 1_000_000
+    with pytest.raises(ValueError, match="Sandbox max_output_bytes must be positive"):
+        SandboxConfig(max_output_bytes=0)
+
+
+def test_fake_backend_respects_max_output_bytes_from_config(tmp_path) -> None:
+    async def scenario() -> None:
+        work = tmp_path / "work"
+        work.mkdir()
+        backend = FakeBackend()
+        config = SandboxConfig(max_output_bytes=50)
+        handle = await backend.start(session_id="test-bytes", work_root=str(work), config=config)
+        result = await backend.exec(
+            handle,
+            ["python", "-c", "import sys; sys.stdout.write('a' * 500); sys.stdout.flush()"],
+            timeout=10,
+            max_output_bytes=config.max_output_bytes,
+        )
+        assert "[output truncated]" in result.stdout
+        assert len(result.stdout) <= 50 + len("\n[output truncated]")
+
+    asyncio.run(scenario())

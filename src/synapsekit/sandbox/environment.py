@@ -43,6 +43,7 @@ class SandboxEnvironment:
             self.handle,
             tuple(command),
             timeout=self.config.command_timeout,
+            max_output_bytes=self.config.max_output_bytes,
         )
         self.tracer.record(
             EventKind.SYSTEM_EVENT,
