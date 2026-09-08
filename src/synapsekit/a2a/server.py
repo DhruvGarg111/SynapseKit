@@ -179,5 +179,6 @@ class A2AServer:
         httpd = http.server.HTTPServer((host, port), Handler)
         # Exposed so an embedder (or a test) can shut the server down.
         self._httpd = httpd
-        print(f"A2A Server running at http://{httpd.server_address[0]}:{httpd.server_address[1]}")
+        # server_address[1] is the actually-bound port (matters when port=0).
+        print(f"A2A Server running at http://{host}:{httpd.server_address[1]}")
         httpd.serve_forever()
