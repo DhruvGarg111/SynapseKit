@@ -344,54 +344,51 @@ class TestWebScraperRegression:
     async def test_private_ip_still_blocked(self):
         from synapsekit.agents.tools.web_scraper import _validate_url
 
-        with patch("socket.gethostbyname", return_value="192.168.1.1"):
-            with pytest.raises(ValueError, match="private"):
-                await _validate_url("http://internal.corp/secret")
+        # IP literal — resolved directly by the shared guard, no DNS needed.
+        with pytest.raises(ValueError, match="private"):
+            await _validate_url("http://192.168.1.1/secret")
 
     @pytest.mark.asyncio
     async def test_public_ip_allowed(self):
         from synapsekit.agents.tools.web_scraper import _validate_url
 
-        with patch("socket.gethostbyname", return_value="8.8.8.8"):
-            # should not raise
-            await _validate_url("https://example.com/page")
+        # Public IP literal — should not raise.
+        await _validate_url("https://8.8.8.8/page")
 
     @pytest.mark.asyncio
     async def test_dns_lookup_uses_executor_not_blocking(self):
-        """Verify run_in_executor is called (not the bare blocking call)."""
+        """Verify the (blocking) SSRF guard runs via run_in_executor, off-loop."""
         from synapsekit.agents.tools.web_scraper import _validate_url
 
         executor_calls = []
 
         async def fake_executor(pool, fn, *args):
             executor_calls.append(args)
-            return "1.2.3.4"
+            return None
 
         loop = asyncio.get_running_loop()
         with patch.object(loop, "run_in_executor", side_effect=fake_executor):
             await _validate_url("https://example.com")
 
         assert len(executor_calls) == 1
-        assert executor_calls[0][0] == "example.com"
+        # The full URL is handed to the guard (which parses scheme + resolves).
+        assert executor_calls[0][0] == "https://example.com"
 
     @pytest.mark.asyncio
-    async def test_bad_scheme_raises_before_dns(self):
+    async def test_bad_scheme_raises(self):
         from synapsekit.agents.tools.web_scraper import _validate_url
 
-        with patch("socket.gethostbyname") as mock_dns:
-            with pytest.raises(ValueError, match="scheme"):
-                await _validate_url("ftp://example.com")
-            mock_dns.assert_not_called()
+        with pytest.raises(ValueError, match="scheme"):
+            await _validate_url("ftp://example.com")
 
     @pytest.mark.asyncio
-    async def test_gaierror_is_ignored(self):
-        import socket
-
+    async def test_unresolvable_host_fails_closed(self):
         from synapsekit.agents.tools.web_scraper import _validate_url
 
-        with patch("socket.gethostbyname", side_effect=socket.gaierror):
-            # Should not raise — unknown hosts are allowed through
-            await _validate_url("https://unknown-host-xyz.example")
+        # The previous bespoke guard failed OPEN on DNS errors (the bug fixed in
+        # #1022). The shared guard fails CLOSED: an unresolvable host is rejected.
+        with pytest.raises(ValueError):
+            await _validate_url("https://unknown-host-xyz.invalid")
 
 
 # ---------------------------------------------------------------------------

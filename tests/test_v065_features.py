@@ -319,7 +319,7 @@ class TestGraphQLTool:
 
         with patch.dict("sys.modules", {"aiohttp": _mock_aiohttp_module(session)}):
             result = await tool.run(
-                url="https://api.example.com/graphql",
+                url="https://8.8.8.8/graphql",
                 query="{ user { name } }",
             )
 
@@ -333,7 +333,7 @@ class TestGraphQLTool:
 
         with patch.dict("sys.modules", {"aiohttp": _mock_aiohttp_module(session)}):
             result = await tool.run(
-                url="https://api.example.com/graphql",
+                url="https://8.8.8.8/graphql",
                 query="query($id: ID!) { user(id: $id) { id } }",
                 variables='{"id": "1"}',
             )
@@ -346,7 +346,7 @@ class TestGraphQLTool:
 
         with patch.dict("sys.modules", {"aiohttp": _mock_aiohttp_module(session)}):
             result = await tool.run(
-                url="https://api.example.com/graphql",
+                url="https://8.8.8.8/graphql",
                 query="{ users { id } }",
                 headers='{"Authorization": "Bearer token123"}',
             )
@@ -357,7 +357,7 @@ class TestGraphQLTool:
         mock_aiohttp = _mock_aiohttp_module(MagicMock())
         with patch.dict("sys.modules", {"aiohttp": mock_aiohttp}):
             result = await tool.run(
-                url="https://api.example.com/graphql",
+                url="https://8.8.8.8/graphql",
                 query="{ user { id } }",
                 variables="not-json",
             )
@@ -368,7 +368,7 @@ class TestGraphQLTool:
         mock_aiohttp = _mock_aiohttp_module(MagicMock())
         with patch.dict("sys.modules", {"aiohttp": mock_aiohttp}):
             result = await tool.run(
-                url="https://api.example.com/graphql",
+                url="https://8.8.8.8/graphql",
                 query="{ user { id } }",
                 headers="not-json",
             )
@@ -381,7 +381,7 @@ class TestGraphQLTool:
         assert "No URL" in result.error
 
     async def test_no_query_error(self, tool):
-        result = await tool.run(url="https://api.example.com/graphql")
+        result = await tool.run(url="https://8.8.8.8/graphql")
         assert result.is_error
         assert "No GraphQL query" in result.error
 
@@ -391,7 +391,7 @@ class TestGraphQLTool:
 
         with patch.dict("sys.modules", {"aiohttp": _mock_aiohttp_module(session)}):
             result = await tool.run(
-                url="https://api.example.com/graphql",
+                url="https://8.8.8.8/graphql",
                 query="{ user { id } }",
             )
 
