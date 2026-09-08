@@ -313,9 +313,7 @@ class TestA2AServer:
         server = A2AServer(
             MockExecutor(), AgentCard(name="t", description="d"), auth_token="s3cret"
         )
-        thread = threading.Thread(
-            target=lambda: server.run(host="127.0.0.1", port=0), daemon=True
-        )
+        thread = threading.Thread(target=lambda: server.run(host="127.0.0.1", port=0), daemon=True)
         thread.start()
         deadline = time.time() + 5.0
         while server._httpd is None and time.time() < deadline:

@@ -173,9 +173,7 @@ class KVCacheStore:
             # non-matching HMAC is treated as a cache miss so the tampered blob
             # never reaches the native state deserializer.
             expected = meta.get("hmac")
-            if not isinstance(expected, str) or not hmac.compare_digest(
-                expected, self._sign(blob)
-            ):
+            if not isinstance(expected, str) or not hmac.compare_digest(expected, self._sign(blob)):
                 return None
 
             return blob, meta

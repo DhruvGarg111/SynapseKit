@@ -44,9 +44,7 @@ class FileListTool(BaseTool):
         **kwargs: Any,
     ) -> ToolResult:
         path = path or kwargs.get("input", ".")
-        if self._base_dir is not None and not Path(path).resolve().is_relative_to(
-            self._base_dir
-        ):
+        if self._base_dir is not None and not Path(path).resolve().is_relative_to(self._base_dir):
             return ToolResult(
                 output="", error="Access denied: path is outside the allowed directory."
             )

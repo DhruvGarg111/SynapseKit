@@ -115,9 +115,7 @@ class TestIdentifierValidation:
     @pytest.mark.parametrize("table", ["t;DROP", "t space", "t-dash", "1t", "t.x"])
     def test_malicious_table_rejected(self, table):
         with pytest.raises(ValueError, match="Invalid Cassandra table_name"):
-            CassandraVectorStore(
-                embedding_backend=object(), keyspace="ks_ok", table_name=table
-            )
+            CassandraVectorStore(embedding_backend=object(), keyspace="ks_ok", table_name=table)
 
     def test_valid_identifiers_pass_validation(self):
         from synapsekit.retrieval.cassandra_vector import _validate_identifier

@@ -295,9 +295,7 @@ class TestFileReadTool:
         allowed.mkdir()
         outside = tmp_path / "outside.txt"
         outside.write_text("nope")
-        r = await FileReadTool(base_dir=str(allowed)).run(
-            path=str(allowed / ".." / "outside.txt")
-        )
+        r = await FileReadTool(base_dir=str(allowed)).run(path=str(allowed / ".." / "outside.txt"))
         assert r.is_error
         assert "Access denied" in r.error
 
