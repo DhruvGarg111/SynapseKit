@@ -148,7 +148,11 @@ teams = ["httpx>=0.27"]
 http = ["aiohttp>=3.14.3"]
 search = ["duckduckgo-search>=6.0"]
 huggingface = ["huggingface-hub>=0.20", "httpx>=0.27"]
-transformers = ["transformers>=4.0"]
+# transformers floored to >=5.10.0: fixes CVE-2026-9856 (save_pretrained chat-
+# template path traversal → arbitrary file write), fixed upstream in 5.10.0 with
+# no back-port to older lines. The lockfile already resolved 5.9.0, so this
+# codifies the 5.x major already shipped rather than widening it.
+transformers = ["transformers>=5.10.0"]
 tiktoken = ["tiktoken>=0.12"]
 google-search = ["google-search-results>=2.4"]
 tavily = ["tavily-python>=0.3"]
@@ -185,12 +189,12 @@ discord = ["discord.py>=2.0"]
 gcs = ["google-cloud-storage>=2.0"]
 bigquery = ["google-cloud-bigquery>=3.0"]
 gdrive = ["google-api-python-client>=2.0", "google-auth>=2.0", "httplib2>=0.32.0"]
-git = ["gitpython>=3.1.57"]
+git = ["gitpython>=3.1.59"]
 gsheets = ["google-api-python-client>=2.0", "google-auth>=2.0", "httplib2>=0.32.0"]
 jira = ["httpx>=0.27"]
 hubspot = ["hubspot-api-client>=8.0"]
 sql = ["sqlalchemy>=2.0"]
-snowflake = ["snowflake-connector-python>=3.0"]
+snowflake = ["snowflake-connector-python>=4.7.1"]
 mongodb = ["pymongo>=4.0"]
 mongodb-vector = ["pymongo>=4.0"]
 salesforce = ["simple-salesforce>=1.12"]
@@ -264,14 +268,14 @@ all = [
     "httplib2>=0.32.0",
     "google-cloud-bigquery>=3.0",
     "feedparser>=6.0",
-    "gitpython>=3.1.57",
+    "gitpython>=3.1.59",
     "hubspot-api-client>=8.0",
     "supabase>=2.0",
     "pymongo>=4.0",
     "simple-salesforce>=1.12",
     "azure-storage-blob>=12.0",
     "elasticsearch>=8.0",
-    "snowflake-connector-python>=3.0",
+    "snowflake-connector-python>=4.7.1",
     "pyairtable>=2.0",
     "playwright>=1.40",
     "pyautogui>=0.9",
