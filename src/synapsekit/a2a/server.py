@@ -2,29 +2,56 @@
 
 from __future__ import annotations
 
+import hmac
 import json
+import warnings
 from typing import Any
 
 from ..agents.executor import AgentExecutor
 from .agent_card import AgentCard
 from .types import A2ATask
 
+# Hosts that keep the server private to the local machine.
+_LOOPBACK_HOSTS = frozenset({"127.0.0.1", "::1", "localhost"})
+
 
 class A2AServer:
     """Expose a SynapseKit agent as an A2A-compatible server.
+
+    The ``POST /a2a`` endpoint drives ``executor.run()`` — whose tool set is the
+    trust boundary — so exposing it on a network interface without
+    authentication lets any reachable host drive the agent. Pass ``auth_token``
+    to require a matching ``Authorization: Bearer <token>`` header; when the
+    server binds a non-loopback host without a token, a security warning is
+    emitted.
 
     Usage::
         server = A2AServer(
             executor=my_executor,
             card=AgentCard(name="my-agent", description="Helpful assistant"),
+            auth_token="s3cret",
         )
         server.run(port=8001)
     """
 
-    def __init__(self, executor: AgentExecutor, card: AgentCard) -> None:
+    def __init__(
+        self,
+        executor: AgentExecutor,
+        card: AgentCard,
+        auth_token: str | None = None,
+    ) -> None:
         self._executor = executor
         self._card = card
         self._tasks: dict[str, A2ATask] = {}
+        self._auth_token = auth_token
+        self._httpd: Any | None = None
+
+    def _authorized(self, auth_header: str | None) -> bool:
+        """Constant-time check of the ``Authorization: Bearer <token>`` header."""
+        if not self._auth_token:
+            return True
+        expected = f"Bearer {self._auth_token}"
+        return auth_header is not None and hmac.compare_digest(auth_header, expected)
 
     async def handle_request(self, body: dict[str, Any]) -> dict[str, Any]:
         """Handle an incoming JSON-RPC request."""
@@ -94,6 +121,14 @@ class A2AServer:
         import asyncio
         import http.server
 
+        if host not in _LOOPBACK_HOSTS and not self._auth_token:
+            warnings.warn(
+                f"A2AServer is binding {host!r} (network-reachable) with no auth_token: "
+                "any host that can reach this port can drive the agent executor. "
+                "Pass auth_token=... or bind host='127.0.0.1'.",
+                stacklevel=2,
+            )
+
         server_instance = self
         card = self._card
 
@@ -110,6 +145,19 @@ class A2AServer:
 
             def do_POST(self):
                 if self.path == "/a2a":
+                    if not server_instance._authorized(self.headers.get("Authorization")):
+                        payload = json.dumps(
+                            {
+                                "jsonrpc": "2.0",
+                                "id": None,
+                                "error": {"code": -32001, "message": "Unauthorized"},
+                            }
+                        ).encode()
+                        self.send_response(401)
+                        self.send_header("Content-Type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(payload)
+                        return
                     length = int(self.headers.get("Content-Length", 0))
                     body = json.loads(self.rfile.read(length).decode())
 
@@ -129,5 +177,7 @@ class A2AServer:
                 pass
 
         httpd = http.server.HTTPServer((host, port), Handler)
-        print(f"A2A Server running at http://{host}:{port}")
+        # Exposed so an embedder (or a test) can shut the server down.
+        self._httpd = httpd
+        print(f"A2A Server running at http://{httpd.server_address[0]}:{httpd.server_address[1]}")
         httpd.serve_forever()

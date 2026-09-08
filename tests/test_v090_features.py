@@ -1,6 +1,9 @@
 """Tests for v0.9.0 features: A2A protocol, guardrails, distributed tracing."""
 
+import json
 import time
+
+import pytest
 
 from synapsekit.a2a import A2AClient, A2AMessage, A2AServer, A2ATask, AgentCard
 from synapsekit.agents.guardrails import (
@@ -264,6 +267,94 @@ class TestA2AServer:
         }
         result = await server.handle_request(body)
         assert result["result"]["state"] == "failed"
+
+    # -- Authentication (#1023) --------------------------------------------
+
+    def test_authorized_no_token_allows_all(self):
+        server = A2AServer(MockExecutor(), AgentCard(name="t", description="d"))
+        assert server._authorized(None) is True
+        assert server._authorized("Bearer anything") is True
+
+    def test_authorized_requires_matching_bearer(self):
+        server = A2AServer(
+            MockExecutor(), AgentCard(name="t", description="d"), auth_token="s3cret"
+        )
+        assert server._authorized("Bearer s3cret") is True
+        assert server._authorized("Bearer wrong") is False
+        assert server._authorized("s3cret") is False  # missing "Bearer " prefix
+        assert server._authorized(None) is False
+
+    def test_run_warns_on_public_bind_without_token(self):
+        # Binding a non-loopback host with no auth_token must warn. Patch the
+        # HTTPServer so run() emits the warning without actually serving.
+        import http.server
+
+        server = A2AServer(MockExecutor(), AgentCard(name="t", description="d"))
+
+        class _NoServe(http.server.HTTPServer):
+            def serve_forever(self, *a, **k):  # do not block
+                return None
+
+        orig = http.server.HTTPServer
+        http.server.HTTPServer = _NoServe
+        try:
+            with pytest.warns(UserWarning, match="no auth_token"):
+                server.run(host="0.0.0.0", port=0)
+        finally:
+            http.server.HTTPServer = orig
+
+    def test_http_endpoint_enforces_auth(self):
+        # Real loopback HTTP integration: start the server on an ephemeral port
+        # in a background thread and exercise the 401/200 auth path over TCP.
+        import threading
+        import urllib.error
+        import urllib.request
+
+        server = A2AServer(
+            MockExecutor(), AgentCard(name="t", description="d"), auth_token="s3cret"
+        )
+        thread = threading.Thread(
+            target=lambda: server.run(host="127.0.0.1", port=0), daemon=True
+        )
+        thread.start()
+        deadline = time.time() + 5.0
+        while server._httpd is None and time.time() < deadline:
+            time.sleep(0.01)
+        assert server._httpd is not None, "server did not start"
+        port = server._httpd.server_address[1]
+        url = f"http://127.0.0.1:{port}/a2a"
+        payload = json.dumps(
+            {
+                "jsonrpc": "2.0",
+                "method": "tasks/send",
+                "id": "r1",
+                "params": {"id": "t1", "message": {"role": "user", "content": "hi"}},
+            }
+        ).encode()
+
+        try:
+            # No token -> 401.
+            with pytest.raises(urllib.error.HTTPError) as exc:
+                urllib.request.urlopen(urllib.request.Request(url, data=payload), timeout=5)
+            assert exc.value.code == 401
+
+            # Wrong token -> 401.
+            req = urllib.request.Request(url, data=payload)
+            req.add_header("Authorization", "Bearer nope")
+            with pytest.raises(urllib.error.HTTPError) as exc:
+                urllib.request.urlopen(req, timeout=5)
+            assert exc.value.code == 401
+
+            # Correct token -> 200 and a real task response.
+            req = urllib.request.Request(url, data=payload)
+            req.add_header("Authorization", "Bearer s3cret")
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                assert resp.status == 200
+                body = json.loads(resp.read().decode())
+            assert body["result"]["state"] == "completed"
+        finally:
+            server._httpd.shutdown()
+            thread.join(timeout=5)
 
 
 # ===========================================================================
