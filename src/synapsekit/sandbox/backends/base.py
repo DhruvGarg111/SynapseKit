@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import platform
 from collections.abc import Sequence
 from dataclasses import dataclass, field
@@ -44,6 +45,7 @@ class SandboxBackend:
         command: Sequence[str],
         *,
         timeout: float,
+        max_output_bytes: int = 1_000_000,
     ) -> CommandResult:
         raise NotImplementedError
 
@@ -51,16 +53,60 @@ class SandboxBackend:
         raise NotImplementedError
 
 
+async def _drain_process(
+    process: asyncio.subprocess.Process,
+    limit: int,
+) -> tuple[bytes, bytes, bool]:
+    overflowed = False
+
+    async def _read(stream: asyncio.StreamReader | None) -> bytes:
+        nonlocal overflowed
+        if stream is None:
+            return b""
+        chunks: list[bytes] = []
+        total = 0
+        while True:
+            chunk = await stream.read(65536)
+            if not chunk:
+                break
+            chunks.append(chunk)
+            total += len(chunk)
+            if total > limit:
+                overflowed = True
+                with contextlib.suppress(ProcessLookupError):
+                    process.kill()
+                break
+        return b"".join(chunks)
+
+    stdout, stderr = await asyncio.gather(
+        _read(process.stdout),
+        _read(process.stderr),
+    )
+    await process.wait()
+    return stdout, stderr, overflowed
+
+
+def _decode_output(value: bytes | None, limit: int) -> str:
+    if not value:
+        return ""
+    clipped = value[:limit]
+    suffix = "\n[output truncated]" if len(value) > limit else ""
+    return clipped.decode("utf-8", errors="replace") + suffix
+
+
 async def run_process(
     command: Sequence[str],
     *,
     cwd: str | None = None,
     timeout: float = 120.0,
+    max_output_bytes: int = 1_000_000,
 ) -> CommandResult:
     """Run an executable without invoking a shell."""
 
     if not command:
         raise ValueError("Backend command must not be empty.")
+    if max_output_bytes <= 0:
+        raise ValueError("max_output_bytes must be positive.")
     try:
         process = await asyncio.create_subprocess_exec(
             *command,
@@ -72,15 +118,17 @@ async def run_process(
         return CommandResult(returncode=127, stderr=f"Executable not found: {command[0]}")
 
     try:
-        stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
+        stdout, stderr, _ = await asyncio.wait_for(
+            _drain_process(process, max_output_bytes), timeout=timeout
+        )
     except TimeoutError:
         process.kill()
-        await process.communicate()
+        await process.wait()
         return CommandResult(returncode=124, stderr=f"Command timed out after {timeout:.1f}s.")
     return CommandResult(
-        returncode=process.returncode or 0,
-        stdout=stdout.decode("utf-8", errors="replace"),
-        stderr=stderr.decode("utf-8", errors="replace"),
+        returncode=process.returncode if process.returncode is not None else 0,
+        stdout=_decode_output(stdout, max_output_bytes),
+        stderr=_decode_output(stderr, max_output_bytes),
     )
 
 
