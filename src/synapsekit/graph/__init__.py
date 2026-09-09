@@ -45,6 +45,13 @@ __all__ = [
     "PostgresCheckpointer",
     "RedisCheckpointer",
     "SQLiteCheckpointer",
+    "MongoDBCheckpointer",
+    "CassandraCheckpointer",
+    "ScyllaCheckpointer",
+    "ScyllaDBCheckpointer",
+    "DynamoDBCheckpointer",
+    "FirestoreCheckpointer",
+    "CosmosDBCheckpointer",
     "StateField",
     "StateGraph",
     "TraceEntry",
@@ -67,6 +74,13 @@ def __getattr__(name: str):  # type: ignore[no-untyped-def]
     _lazy = {
         "RedisCheckpointer": "checkpointers.redis",
         "PostgresCheckpointer": "checkpointers.postgres",
+        "MongoDBCheckpointer": "checkpointers.mongodb",
+        "CassandraCheckpointer": "checkpointers.cassandra",
+        "ScyllaCheckpointer": "checkpointers.cassandra",
+        "ScyllaDBCheckpointer": "checkpointers.scylla",
+        "DynamoDBCheckpointer": "checkpointers.dynamodb",
+        "FirestoreCheckpointer": "checkpointers.firestore",
+        "CosmosDBCheckpointer": "checkpointers.cosmos",
     }
     if name in _lazy:
         import importlib

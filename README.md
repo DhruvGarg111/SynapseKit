@@ -141,7 +141,7 @@ print(my_agent.run("What's the weather in Tokyo?"))
 | Agent federation | **✅ Built-in** | ❌ No | ❌ No |
 | Reasoning LLMs | **✅ Unified adapter** | ⚠️ Manual | ⚠️ Manual |
 | Structured output | **✅ Provider-agnostic** | ⚠️ Provider-specific | ⚠️ Provider-specific |
-| Agent memory backends | **✅ 4 built-in** | ⚠️ Community plugins | ⚠️ Community plugins |
+| Agent memory backends | **✅ 9 built-in** | ⚠️ Community plugins | ⚠️ Community plugins |
 | Observability | **✅ Prometheus + Grafana** | ❌ No | ❌ No |
 | Verifiable audit trails | **✅ Signed, hash-chained** | ❌ No | ❌ No |
 | Type safety | **✅ Strict dataclasses** | ⚠️ Partial | ⚠️ Partial |
@@ -740,6 +740,8 @@ contract is a JSON snapshot that replays documents into the selected backend.
     <td align="center" width="90"><img src="https://www.google.com/s2/favicons?domain=memcached.org&sz=128" height="40" alt="Memcached"/><br/><sub><b>Memcached</b></sub></td>
   </tr>
 </table>
+
+Persistent memory backend configuration and graph-checkpointer parity are documented in [`docs/memory/backends.md`](docs/memory/backends.md).
 
 ### 📡 Observability
 
