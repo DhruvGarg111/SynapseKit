@@ -93,10 +93,13 @@ class BoxLoader:
                     Document(
                         text=text,
                         metadata={
+                            # Spread the Box entry first so its fields can never
+                            # clobber the loader's own reserved metadata keys
+                            # (a Box field literally named "source"/"row"/etc.).
+                            **file_data,
                             "source": "box",
                             "row": index,
                             "file_id": file_data.get("id"),
-                            **file_data,
                         },
                     )
                 )
