@@ -49,6 +49,7 @@ class FirecrackerBackend(SandboxBackend):
         command: Sequence[str],
         *,
         timeout: float,
+        max_output_bytes: int = 1_000_000,
     ) -> CommandResult:
         raise BackendUnavailableError("Firecracker execution is not configured for this host.")
 

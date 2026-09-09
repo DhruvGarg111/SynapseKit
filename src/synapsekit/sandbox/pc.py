@@ -286,6 +286,7 @@ class PCSandbox:
                 "fs_overlay": environment.config.fs_overlay,
                 "image": environment.config.image,
                 "command_timeout": environment.config.command_timeout,
+                "max_output_bytes": environment.config.max_output_bytes,
                 "memory": environment.config.memory,
                 "cpus": environment.config.cpus,
                 "pids_limit": environment.config.pids_limit,

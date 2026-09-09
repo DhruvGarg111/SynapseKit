@@ -96,10 +96,12 @@ class DockerBackend(SandboxBackend):
         command: Sequence[str],
         *,
         timeout: float,
+        max_output_bytes: int = 1_000_000,
     ) -> CommandResult:
         return await run_process(
             ["docker", "exec", "--workdir", "/workspace", handle.identifier, *command],
             timeout=timeout,
+            max_output_bytes=max_output_bytes,
         )
 
     async def close(self, handle: BackendHandle) -> None:

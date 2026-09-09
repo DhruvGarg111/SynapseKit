@@ -41,8 +41,14 @@ class FakeBackend(SandboxBackend):
         command: Sequence[str],
         *,
         timeout: float,
+        max_output_bytes: int = 1_000_000,
     ) -> CommandResult:
-        return await run_process(command, cwd=handle.work_root, timeout=timeout)
+        return await run_process(
+            command,
+            cwd=handle.work_root,
+            timeout=timeout,
+            max_output_bytes=max_output_bytes,
+        )
 
     async def close(self, handle: BackendHandle) -> None:
         return None
