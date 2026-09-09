@@ -122,6 +122,7 @@ class SandboxConfig:
     state_dir: Path | None = None
     image: str = "python:3.12-slim"
     command_timeout: float = 120.0
+    max_output_bytes: int = 1_000_000
     memory: str | None = "1g"
     cpus: float | None = 2.0
     pids_limit: int = 256
@@ -142,6 +143,8 @@ class SandboxConfig:
         object.__setattr__(self, "network", network)
         if self.command_timeout <= 0:
             raise ValueError("Sandbox command_timeout must be positive.")
+        if self.max_output_bytes <= 0:
+            raise ValueError("Sandbox max_output_bytes must be positive.")
         if self.cpus is not None and self.cpus <= 0:
             raise ValueError("Sandbox cpus must be positive when supplied.")
         if self.pids_limit <= 0:
