@@ -555,7 +555,12 @@ class InMemoryWorldGraphBackend:
         if subject_id is None or object_id is None:
             return None
 
-        edge_id = f"{subject_id}:{_slug(relation.predicate)}:{object_id}"
+        base_edge_id = f"{subject_id}:{_slug(relation.predicate)}:{object_id}"
+        edge_id = base_edge_id
+        if edge_id in self.edges and relation.valid_at is not None:
+            existing = self.edges[edge_id]
+            if existing.valid_at is not None and existing.valid_at != relation.valid_at:
+                edge_id = f"{base_edge_id}:{relation.valid_at.isoformat()}"
         now = datetime.now(UTC)
         if edge_id not in self.edges:
             self.edges[edge_id] = WorldModelEdge(
@@ -1387,7 +1392,7 @@ class WorldModelRAG:
         # Collect all (text, metadata, doc_id) first, then add to the vector index
         # in a single batched call (embedding backends embed batches far more
         # efficiently than one text at a time).
-        prepared: list[tuple[str, str]] = []
+        prepared: list[tuple[str, str, datetime | None]] = []
         batch_texts: list[str] = []
         batch_metadata: list[dict] = []
         for doc in docs:
@@ -1395,18 +1400,30 @@ class WorldModelRAG:
             if not text.strip():
                 continue
             doc_id = self._doc_id(metadata)
-            prepared.append((text, doc_id))
+            event_timestamp = _parse_datetime(
+                metadata.get("valid_at")
+                or metadata.get("timestamp")
+                or metadata.get("event_timestamp")
+            )
+            prepared.append((text, doc_id, event_timestamp))
             batch_texts.append(text)
             batch_metadata.append({**metadata, "source": doc_id, "world_model_doc_id": doc_id})
 
         if batch_texts:
             await self.vector_retriever.add(batch_texts, batch_metadata)
 
-        for text, doc_id in prepared:
+        for text, doc_id, event_timestamp in prepared:
             extraction = await self.extractor.extract(text, self.extraction)
             for entity in extraction.entities:
                 self.graph_backend.upsert_entity(entity, doc_id)
             for event in extraction.events:
+                if event.timestamp is None and event_timestamp is not None:
+                    event = EventMention(
+                        name=event.name,
+                        participants=event.participants,
+                        timestamp=event_timestamp,
+                        confidence=event.confidence,
+                    )
                 self.graph_backend.add_event(event, doc_id)
             for relation in extraction.relations:
                 score = await self.causal_linker.score(relation, text)
@@ -1417,7 +1434,7 @@ class WorldModelRAG:
                             predicate=relation.predicate,
                             object=relation.object,
                             confidence=score,
-                            valid_at=relation.valid_at,
+                            valid_at=relation.valid_at or event_timestamp,
                             valid_until=relation.valid_until,
                             causal=relation.causal,
                         ),
