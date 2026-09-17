@@ -267,6 +267,17 @@ class TestImageLoaderAsync:
         assert "description_prompt" in docs[0].metadata
 
     @pytest.mark.asyncio
+    async def test_text_only_llm_uses_image_placeholder(self, tiny_png_path: Path):
+        mock_llm = AsyncMock()
+        mock_llm.supports_multimodal = False
+        loader = ImageLoader(tiny_png_path, llm=mock_llm)
+
+        docs = await loader.async_load()
+
+        assert docs[0].text == f"[Image: {tiny_png_path}]"
+        mock_llm.generate_with_messages.assert_not_called()
+
+    @pytest.mark.asyncio
     async def test_missing_file_async(self, tmp_path: Path):
         loader = ImageLoader(tmp_path / "nope.png")
         with pytest.raises(FileNotFoundError):

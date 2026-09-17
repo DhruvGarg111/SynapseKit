@@ -40,6 +40,8 @@ class ImageLoader:
         metadata = self._base_metadata()
         if self._llm is None:
             return [Document(text=f"[Image: {self._path}]", metadata=metadata)]
+        if getattr(self._llm, "supports_multimodal", True) is False:
+            return [Document(text=f"[Image: {self._path}]", metadata=metadata)]
 
         image = ImageContent.from_file(self._path)
         message = MultimodalMessage(text=self._prompt, images=[image])
