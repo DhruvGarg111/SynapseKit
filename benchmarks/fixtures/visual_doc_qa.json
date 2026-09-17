@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Which page has the green highlighted revenue cell?",
+    "expected_page": 2,
+    "visual_tokens": "page 2 table green highlighted revenue cell",
+    "extracted_text": "42 million"
+  },
+  {
+    "question": "Which page contains the blue north-region bar?",
+    "expected_page": 1,
+    "visual_tokens": "page 1 bar chart blue north region",
+    "extracted_text": "17 units"
+  },
+  {
+    "question": "Which page shows the orange churn trend?",
+    "expected_page": 3,
+    "visual_tokens": "page 3 line chart orange churn trend",
+    "extracted_text": "8 percent"
+  },
+  {
+    "question": "Which page contains the purple margin matrix?",
+    "expected_page": 4,
+    "visual_tokens": "page 4 matrix purple margin",
+    "extracted_text": "13 percent"
+  },
+  {
+    "question": "Which page has the dashed forecast line?",
+    "expected_page": 5,
+    "visual_tokens": "page 5 chart dashed forecast line",
+    "extracted_text": "2026 forecast"
+  },
+  {
+    "question": "Which page contains the red warning badge?",
+    "expected_page": 6,
+    "visual_tokens": "page 6 dashboard red warning badge",
+    "extracted_text": "Review required"
+  },
+  {
+    "question": "Which page shows the dotted baseline?",
+    "expected_page": 7,
+    "visual_tokens": "page 7 plot dotted baseline",
+    "extracted_text": "0.0 baseline"
+  },
+  {
+    "question": "Which page has the shaded confidence band?",
+    "expected_page": 8,
+    "visual_tokens": "page 8 plot shaded confidence band",
+    "extracted_text": "95 percent interval"
+  }
+]

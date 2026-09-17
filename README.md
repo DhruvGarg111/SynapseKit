@@ -235,7 +235,7 @@ SynapseKit is for Python developers who want to ship LLM features without fighti
 <td width="50%">
 
 **🗂 RAG Pipelines**<br/>
-Retrieval-augmented generation with streaming, BM25 reranking, conversation memory, and token tracing. Load from PDFs, URLs, CSVs, HTML, directories, and more.
+Retrieval-augmented generation with streaming, BM25 reranking, conversation memory, token tracing, and optional visual-page retrieval for scanned PDFs and slide decks. Load from PDFs, URLs, CSVs, HTML, directories, and more. See the [SynapseKit documentation](https://synapsekit.github.io/synapsekit-docs/) for visual setup and fallback behavior.
 
 </td>
 <td width="50%">

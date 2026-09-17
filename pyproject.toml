@@ -66,6 +66,12 @@ anthropic = ["anthropic>=0.25"]
 semantic = []
 colbert = []
 pdf = ["pypdf>=6.15.0"]
+visual = [
+    "pypdf>=6.15.0",
+    "pymupdf>=1.24",
+    "python-pptx>=0.6",
+    "transformers>=5.10.0",
+]
 wikipedia = ["wikipedia-api>=0.6"]
 arxiv = ["arxiv>=2.0"]
 html = ["beautifulsoup4>=4.12", "lxml>=6.1.0"]
@@ -236,6 +242,9 @@ all = [
     "openai>=1.0",
     "anthropic>=0.25",
     "pypdf>=6.13.3",
+    "pymupdf>=1.24",
+    "python-pptx>=0.6",
+    "transformers>=5.10.0",
     "wikipedia-api>=0.6",
     "arxiv>=2.0",
     "beautifulsoup4>=4.12",
@@ -598,6 +607,7 @@ snowflake-connector-python = "snowflake"
 "opensearch-py" = "opensearchpy"
 "deepgram-sdk" = "deepgram"
 "piper-tts" = "piper"
+pymupdf = ["pymupdf", "fitz"]
 
 [tool.deptry.per_rule_ignores]
 DEP001 = ["sqlalchemy", "pydantic", "aiohttp", "opentelemetry", "whisper", "botocore", "aiomcache", "nest_asyncio", "huggingface_hub", "serpapi", "weaviate", "uvicorn", "starlette", "tomli", "pyttsx3", "faster_whisper", "sounddevice", "soundfile", "aiokafka", "kafka", "typesense", "prometheus_client", "sentence_transformers", "llama_cpp", "ragatouille", "torch", "httpx", "google-genai"]
