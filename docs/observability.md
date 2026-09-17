@@ -55,6 +55,33 @@ SynapseKit emits the following metrics when enabled:
 - `synapsekit_cost_usd_total` (counter)
 - `synapsekit_tokens_total` (counter)
 - `synapsekit_latency_seconds` (histogram)
+- `synapsekit_budget_remaining_usd` (gauge)
+- `synapsekit_arbitrage_savings_usd` (gauge)
+
+## Cut LLM cost 40% in one line
+
+Wrap existing provider clients without changing your application call site:
+
+```python
+from synapsekit import CostQualityRouter, PricingTable
+
+router = CostQualityRouter(
+    candidates=[economy_llm, premium_llm],
+    pricing_table=PricingTable.from_cost_table(),
+    explore_n=0,
+)
+answer = await router.generate("Summarise this document")
+```
+
+Use `ModelPricing` entries to override provider/model input, output, cached-input,
+quality, latency-SLA, region, and carbon metadata. Request classes apply a
+quality floor and maximum latency; the router chooses the cheapest eligible
+provider and model. Pass `tenant_id` and `api_key_id` on each call to apply
+`BudgetLedger` hard caps, soft alerts, and spend attribution. A
+`FallbackChain` remains a valid candidate, so outage and rate-limit fallback
+behavior composes with routing. Pass `PrometheusMetrics()` for cost, remaining
+budget, and arbitrage-savings metrics, and pass `CarbonEstimator` only when
+your organization has a preferred regional intensity table.
 
 ## Exporters
 
