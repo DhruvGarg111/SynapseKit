@@ -20,6 +20,8 @@ class AzureOpenAILLM(BaseLLM):
     - ``api_version``: Azure API version (default ``"2024-06-01"``).
     """
 
+    supports_multimodal = True
+
     def __init__(
         self,
         config: LLMConfig,

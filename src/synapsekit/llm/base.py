@@ -50,6 +50,10 @@ class LLMConfig:
 class BaseLLM(ABC):
     """Abstract base for all LLM providers."""
 
+    # Providers that accept structured image content override this flag.  The
+    # default keeps message-based callers safe for text-only adapters.
+    supports_multimodal = False
+
     def __init__(self, config: LLMConfig) -> None:
         self.config = config
         self._input_tokens: int = 0

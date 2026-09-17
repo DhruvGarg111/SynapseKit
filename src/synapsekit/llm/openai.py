@@ -10,6 +10,8 @@ from .base import BaseLLM, LLMConfig
 class OpenAILLM(BaseLLM):
     """OpenAI chat completions with async streaming."""
 
+    supports_multimodal = True
+
     def __init__(self, config: LLMConfig) -> None:
         super().__init__(config)
         self._client: Any = None

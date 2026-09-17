@@ -95,6 +95,13 @@ class InMemoryVectorStore(VectorStore):
         for j, m in enumerate(meta):
             global_idx = base + j
             for k, v in m.items():
+                try:
+                    hash(v)
+                except TypeError:
+                    # Metadata may contain structured values such as visual
+                    # bounding boxes.  Keep them in the document metadata,
+                    # but do not use unhashable values as inverted-index keys.
+                    continue
                 if k not in self._index:
                     self._index[k] = {}
                 bucket = self._index[k]
@@ -111,7 +118,13 @@ class InMemoryVectorStore(VectorStore):
         """
         if not metadata_filter:
             return None
-        candidate_sets = [self._index.get(k, {}).get(v, set()) for k, v in metadata_filter.items()]
+        candidate_sets = []
+        for k, v in metadata_filter.items():
+            try:
+                hash(v)
+            except TypeError:
+                return []
+            candidate_sets.append(self._index.get(k, {}).get(v, set()))
         if not candidate_sets or any(not s for s in candidate_sets):
             return []
         return sorted(set.intersection(*candidate_sets))
