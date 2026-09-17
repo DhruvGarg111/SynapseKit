@@ -283,7 +283,7 @@ Output parsers (JSON, Pydantic, List), prompt templates (standard, chat, few-sho
 <td width="50%">
 
 **⚖️ Cost-Quality Routing** *(new in v1.7.0)*<br/>
-`CostQualityRouter` explores candidates round-robin then exploits the cheapest model meeting your quality threshold. Tracks Pareto frontier of cost vs quality. Optional `budget_per_call_usd` hard cap.
+**Cut LLM cost 40% in one line:** `router = CostQualityRouter(candidates=[economy_llm, premium_llm], explore_n=0)`. The router uses a pluggable provider/model price table to select the cheapest endpoint meeting each quality/latency policy, with tenant/key budget caps, fallback chains, Prometheus savings gauges, and optional carbon estimates. Tracks a Pareto frontier of cost vs quality; `budget_per_call_usd` remains available for legacy per-call limits.
 
 </td>
 </tr>
