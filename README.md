@@ -295,6 +295,10 @@ Every integration is `pip install synapsekit[name]`, nothing else. Swap provider
 
 > Every provider implements the same `BaseLLM` interface. Auto-detected from model name: `gpt-4o` → OpenAI, `claude-*` → Anthropic, `gemini-*` → Google. **Swap without rewriting.**
 
+<details>
+<summary><b>Show all 46 providers</b></summary>
+<br/>
+
 <table>
   <tr>
     <td align="center" width="90"><img src="https://www.google.com/s2/favicons?domain=openai.com&sz=128" height="40" alt="OpenAI"/><br/><sub><b>OpenAI</b></sub></td>
@@ -358,11 +362,17 @@ Every integration is `pip install synapsekit[name]`, nothing else. Swap provider
   </tr>
 </table>
 
+</details>
+
 ---
 
 ### 🗄 Vector Stores: 32 backends
 
 > All implement `VectorStore` with `add()`, `search()`, `search_mmr()`, `save()`, and `load()`. Built-in `InMemoryVectorStore` needs zero extra deps. Everything else is `pip install synapsekit[name]`.
+
+<details>
+<summary><b>Show all 32 backends</b></summary>
+<br/>
 
 <table>
   <tr>
@@ -394,7 +404,11 @@ Every integration is `pip install synapsekit[name]`, nothing else. Swap provider
   </tr>
 </table>
 
-#### Vector-store integration validation
+</details>
+
+<details>
+<summary>Vector-store integration validation notes</summary>
+<br/>
 
 The issue #888 adapters use the same async contract and have provider-SDK
 contract tests. Their live services require credentials or a provider-managed
@@ -418,11 +432,17 @@ provider adapters; Vertex AI additionally requires `document_store_path` because
 its nearest-neighbour response returns IDs only. The local `save()`/`load()`
 contract is a JSON snapshot that replays documents into the selected backend.
 
+</details>
+
 ---
 
 ### 📂 Data Loaders: 83 sources
 
 > All return `list[Document]` with `.text` and `.metadata`. Every loader has a sync `.load()` and async `.aload()`, with the same interface across disk, cloud, databases, and APIs.
+
+<details>
+<summary><b>Show all 83 sources</b></summary>
+<br/>
 
 **File Formats**
 
@@ -508,11 +528,17 @@ contract is a JSON snapshot that replays documents into the selected backend.
   </tr>
 </table>
 
+</details>
+
 ---
 
 ### 🔧 Agent Tools: 56 built-in
 
 > All implement `BaseTool` with a single async `run()`. Pass any list of tools to `ReActAgent` or `FunctionCallingAgent`. **Write your own in 5 lines.**
+
+<details>
+<summary><b>Show all 56 tools</b></summary>
+<br/>
 
 <table>
   <tr>
@@ -544,6 +570,8 @@ contract is a JSON snapshot that replays documents into the selected backend.
     <td align="center" width="90"><img src="https://www.google.com/s2/favicons?domain=gnu.org&sz=128" height="40" alt="Shell"/><br/><sub><b>Shell</b></sub></td>
   </tr>
 </table>
+
+</details>
 
 ---
 
