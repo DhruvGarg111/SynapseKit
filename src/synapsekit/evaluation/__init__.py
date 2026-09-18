@@ -5,6 +5,18 @@ from .faithfulness import FaithfulnessMetric
 from .finetune import FineTuneJob, FineTuner
 from .groundedness import GroundednessMetric
 from .optimizer import PromptCandidate, PromptOptimizer, PromptVariantRunner
+from .orchestration import (
+    ContextLossDetector,
+    DetectorFinding,
+    LLMContextLossJudge,
+    LoopDetector,
+    MisroutingDetector,
+    OrchestrationEvalReport,
+    OrchestrationEvaluator,
+    RunGraph,
+    RunNode,
+    Transfer,
+)
 from .pipeline import EvaluationPipeline, EvaluationResult
 from .rag_evaluator import (
     EmailAlertSink,
@@ -22,24 +34,31 @@ from .relevancy import RelevancyMetric
 from .suite import EvalSuite, EvalSuiteResult
 
 __all__ = [
+    "ContextLossDetector",
+    "DetectorFinding",
     "EvalCaseMeta",
-    "EvalSuite",
-    "EvalSuiteResult",
-    "PromptCandidate",
-    "PromptOptimizer",
-    "PromptVariantRunner",
     "EvalDataset",
     "EvalRecord",
     "EvalRegression",
     "EvalSnapshot",
+    "EvalSuite",
+    "EvalSuiteResult",
     "EvaluationPipeline",
     "EvaluationResult",
     "FaithfulnessMetric",
     "FineTuneJob",
     "FineTuner",
     "GroundednessMetric",
+    "LLMContextLossJudge",
+    "LoopDetector",
     "MetricDelta",
     "MetricResult",
+    "MisroutingDetector",
+    "OrchestrationEvalReport",
+    "OrchestrationEvaluator",
+    "PromptCandidate",
+    "PromptOptimizer",
+    "PromptVariantRunner",
     "EmailAlertSink",
     "PagerDutyAlertSink",
     "RAGAlert",
@@ -48,8 +67,11 @@ __all__ = [
     "RAGEvaluationThresholds",
     "RAGEvaluator",
     "RAGERemediationSuggestion",
+    "RunNode",
+    "RunGraph",
     "SlackWebhookAlertSink",
     "RegressionReport",
     "RelevancyMetric",
+    "Transfer",
     "eval_case",
 ]

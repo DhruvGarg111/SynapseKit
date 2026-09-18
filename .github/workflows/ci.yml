@@ -105,6 +105,16 @@ jobs:
       - run: uv sync --group dev --group bench
       - run: uv run pytest benchmarks/test_edge_local_vs_cloud_bench.py -v
 
+  # Enforces the #983 orchestration-eval acceptance targets: detects infinite handoff
+  # loops, per-transfer context loss, and non-deterministic mis-routing over a RunGraph.
+  orchestration-eval-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --group dev
+      - run: uv run pytest tests/evaluation/orchestration -v
+
   # Real-backend tests via testcontainers (Neo4j/Memgraph, Kuzu, property graph).
   # ubuntu-latest ships a running Docker daemon, so these execute for real here
   # instead of skipping. Kept as a separate job so the fast `test` job stays lean.
