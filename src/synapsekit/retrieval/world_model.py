@@ -581,7 +581,11 @@ class InMemoryWorldGraphBackend:
             edge.confidence = max(edge.confidence, relation.confidence)
             edge.causal = edge.causal or relation.causal
             edge.valid_at = edge.valid_at or relation.valid_at
-            edge.valid_until = edge.valid_until or relation.valid_until
+            # Unlike valid_at (versioned above via a distinct edge_id when it
+            # changes), valid_until has no such fork: prefer a newly supplied
+            # bound over a stale one so a streaming correction (e.g. a later
+            # CDC update narrowing an interval) can actually take effect.
+            edge.valid_until = relation.valid_until or edge.valid_until
             edge.provenance.add(doc_id)
             edge.updated_at = now
 
