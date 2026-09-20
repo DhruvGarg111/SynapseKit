@@ -1400,11 +1400,13 @@ class WorldModelRAG:
             if not text.strip():
                 continue
             doc_id = self._doc_id(metadata)
-            event_timestamp = _parse_datetime(
-                metadata.get("valid_at")
-                or metadata.get("timestamp")
-                or metadata.get("event_timestamp")
-            )
+            # Only "valid_at" is treated as an event timestamp here. Loaders
+            # outside the streaming package (Kafka, Slack, Teams, ...) already
+            # stamp an unrelated "timestamp" key (e.g. message send time), so
+            # falling back to it would silently repurpose it as extracted-fact
+            # validity for every pre-existing ingest() caller, not just
+            # streaming sources -- which set "valid_at" explicitly.
+            event_timestamp = _parse_datetime(metadata.get("valid_at"))
             prepared.append((text, doc_id, event_timestamp))
             batch_texts.append(text)
             batch_metadata.append({**metadata, "source": doc_id, "world_model_doc_id": doc_id})
