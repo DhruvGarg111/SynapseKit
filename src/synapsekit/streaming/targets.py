@@ -198,18 +198,26 @@ class KnowledgeMeshSink:
             await _maybe_await(ingest(active_documents))
 
         if mesh_store is not None:
-            mark = getattr(mesh_store, "mark_file_chunks", None)
-            if callable(mark):
-                for path, path_documents in grouped.items():
-                    await asyncio.to_thread(mark, path, path_documents)
-            stale_ids = {chunk_id for path_ids in stale_by_path.values() for chunk_id in path_ids}
-            if stale_ids:
-                delete = getattr(rag, "delete_by_metadata", None)
-                if callable(delete):
-                    await asyncio.to_thread(delete, "chunk_id", stale_ids)
-            save = getattr(self.mesh, "_save_vector_store", None)
-            if callable(save):
-                await asyncio.to_thread(save)
+            # rag.ingest() above has already persisted the new embeddings; if
+            # a step below raises, still flush whatever mesh-index state we
+            # reached so the on-disk index doesn't diverge from what the
+            # vector store already has.
+            try:
+                mark = getattr(mesh_store, "mark_file_chunks", None)
+                if callable(mark):
+                    for path, path_documents in grouped.items():
+                        await asyncio.to_thread(mark, path, path_documents)
+                stale_ids = {
+                    chunk_id for path_ids in stale_by_path.values() for chunk_id in path_ids
+                }
+                if stale_ids:
+                    delete = getattr(rag, "delete_by_metadata", None)
+                    if callable(delete):
+                        await asyncio.to_thread(delete, "chunk_id", stale_ids)
+            finally:
+                save = getattr(self.mesh, "_save_vector_store", None)
+                if callable(save):
+                    await asyncio.to_thread(save)
 
     @staticmethod
     def _ensure_mesh_metadata(document: Document) -> Document:
