@@ -1436,7 +1436,14 @@ class WorldModelRAG:
                             predicate=relation.predicate,
                             object=relation.object,
                             confidence=score,
-                            valid_at=relation.valid_at or event_timestamp,
+                            # Prefer the document's own timestamp over the
+                            # extractor's when both are present: it's
+                            # deterministic (e.g. a streamed event's fixed
+                            # event time), while an LLM-extracted valid_at can
+                            # vary between runs on re-extraction of the same
+                            # text, which would otherwise fork the graph edge
+                            # id on every replay (see upsert_relation).
+                            valid_at=event_timestamp or relation.valid_at,
                             valid_until=relation.valid_until,
                             causal=relation.causal,
                         ),
