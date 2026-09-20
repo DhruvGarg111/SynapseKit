@@ -7,7 +7,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/synapsekit?color=22c55e&label=pypi&logo=pypi&logoColor=white)](https://pypi.org/project/synapsekit/)
 [![Python](https://img.shields.io/badge/python-3.11%2B-22c55e?logo=python&logoColor=white)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-22c55e)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-3871%20passing-22c55e?logo=pytest&logoColor=white)]()
+[![Tests](https://img.shields.io/badge/tests-5400%2B%20passing-22c55e?logo=pytest&logoColor=white)]()
 [![Downloads](https://img.shields.io/pypi/dm/synapsekit?color=22c55e&logo=pypi&logoColor=white)](https://pypistats.org/packages/synapsekit)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/synapsekit?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/synapsekit)
 [![Website](https://img.shields.io/badge/website-synapse--kit.com-22c55e?logo=googlechrome&logoColor=white)](https://synapse-kit.com)
@@ -21,11 +21,11 @@
 ---
 
 **Build production LLM apps with 2 dependencies.**
-Async-native RAG, Agents, and Graph workflows — no magic, no SaaS, no bloat.
+Async-native RAG, agents, and graph workflows. No magic, no SaaS, no bloat.
 
 > *"LangChain for people who hate LangChain."*
 
-SynapseKit is the minimal, async-first Python framework for LLM applications. 46 providers · 50 tools · 66 loaders · 31 vector stores. Every abstraction is plain Python you can read, debug, and extend. No hidden chains. No global state. No lock-in.
+SynapseKit is a minimal, async-first Python framework for LLM applications: 46 LLM providers, 32 vector stores, 83 data loaders, 56 agent tools, and a dedicated embeddings/reranker layer. Every abstraction is plain Python you can read, debug, and extend. No hidden chains, no global state, no lock-in.
 
 ---
 
@@ -34,23 +34,23 @@ SynapseKit is the minimal, async-first Python framework for LLM applications. 46
 ### 🎬 See it live
 
 <a href="https://synapsekit.github.io/media/">
-  <img src="assets/live-demo-poster.jpg" alt="SynapseKit Live — watch your agents think" width="840">
+  <img src="assets/live-demo-poster.jpg" alt="SynapseKit Live: watch your agents think" width="840">
 </a>
 
 **[▶ Play the demo](https://synapsekit.github.io/media/)** &nbsp;·&nbsp; watch every LLM call, tool, retrieval, DB write, knowledge-graph update, cost, and human approval stream live.
 
-*SynapseKit Live — a zero-dependency, real-time dashboard built into the framework.*
+*SynapseKit Live: a zero-dependency, real-time dashboard built into the framework.*
 
 </div>
 
-**Run the live dashboard locally** — three ways, no extra dependencies (it uses only the Python standard library):
+**Run the live dashboard locally.** Three ways, no extra dependencies (it uses only the Python standard library):
 
 ```bash
 # 1. Zero-touch: set one env var and run your program as usual.
 #    The dashboard auto-starts on the first agent/RAG/graph call and opens your browser.
 SYNAPSEKIT_LIVE=1 python your_agent.py
 
-# 2. From the CLI — start it, then run your code in another shell.
+# 2. From the CLI: start it, then run your code in another shell.
 synapsekit ui --live            # serves http://127.0.0.1:7900
 
 # 3. From code.
@@ -63,7 +63,7 @@ Or try a ready-made demo that exercises everything (loader → embeddings → re
 python examples/live_showcase.py          # set ANTHROPIC_API_KEY first for real Claude calls
 ```
 
-It opens **http://127.0.0.1:7900** and stays live while your process runs — bound to `localhost`, token-gated, and a no-op when the env var isn't set (zero overhead in production).
+It opens **http://127.0.0.1:7900** and stays live while your process runs. Bound to `localhost`, token-gated, and a no-op when the env var isn't set (zero overhead in production).
 
 ---
 
@@ -87,7 +87,7 @@ Token-level streaming is the default,<br/>not an afterthought.<br/>Works across 
 <tr>
 <td align="center" width="33%">
 <h3>🔌 One interface</h3>
-46 LLM providers and 31 vector stores<br/>behind the same API.<br/>Swap without rewriting.
+46 LLM providers and 32 vector stores<br/>behind the same API.<br/>Swap without rewriting.
 </td>
 <td align="center" width="33%">
 <h3>🧩 Composable</h3>
@@ -141,7 +141,7 @@ print(my_agent.run("What's the weather in Tokyo?"))
 | Agent federation | **✅ Built-in** | ❌ No | ❌ No |
 | Reasoning LLMs | **✅ Unified adapter** | ⚠️ Manual | ⚠️ Manual |
 | Structured output | **✅ Provider-agnostic** | ⚠️ Provider-specific | ⚠️ Provider-specific |
-| Agent memory backends | **✅ 9 built-in** | ⚠️ Community plugins | ⚠️ Community plugins |
+| Agent memory backends | **✅ 10 built-in** | ⚠️ Community plugins | ⚠️ Community plugins |
 | Observability | **✅ Prometheus + Grafana** | ❌ No | ❌ No |
 | Verifiable audit trails | **✅ Signed, hash-chained** | ❌ No | ❌ No |
 | Type safety | **✅ Strict dataclasses** | ⚠️ Partial | ⚠️ Partial |
@@ -151,27 +151,37 @@ print(my_agent.run("What's the weather in Tokyo?"))
 
 </div>
 
-LangChain has more raw integrations and more tutorials. That's not what SynapseKit is optimizing for. SynapseKit is optimizing for the engineer who needs to ship, debug, and maintain an LLM feature in production — where readable code, predictable async behavior, and no surprise SaaS bills actually matter.
+LangChain has more raw integrations and more tutorials. SynapseKit optimizes for a different problem: shipping, debugging, and maintaining an LLM feature in production, where readable code, predictable async behavior, and no surprise SaaS bills actually matter.
 
 ---
 
-## New in 2.0.0
+## What's New
 
-Version 2.0 is about **trust and autonomy in production** — provable behavior, self-managing memory, richer retrieval, and local-first operation. It also ships a repo-wide hardening pass: 42 audited security, reliability, and performance fixes, each with a regression test.
+The 2.x line is about trust and autonomy in production: provable agent behavior, self-managing memory, richer retrieval, local-first operation, and policy enforcement at the LLM boundary.
 
-- **[Verifiable Agents](https://synapsekit.github.io/synapsekit-docs/docs/audit/)** — cryptographically signed, hash-chained audit trails (RFC 6962 Merkle batch signing, Ed25519 + pluggable KMS/BYOK) with a standalone verifier that returns `MATCH` / `DRIFT` / `UNVERIFIABLE`. Prove exactly what your agent did.
-- **[Living Memory](https://synapsekit.github.io/synapsekit-docs/docs/memory/living-memory)** — agents propose signed, diffable patches to their memory files instead of silently overwriting them; review, apply, or revert.
-- **[Property Graph RAG](https://synapsekit.github.io/synapsekit-docs/docs/rag/property-graph)** — vector search fused with graph traversal (NetworkX + Neo4j), plus a graph-backed `AgentMemory`.
-- **[WorldModelRAG](https://synapsekit.github.io/synapsekit-docs/docs/rag/world-model)** — temporal knowledge-graph RAG with causal links and validity windows.
-- **[Personal Knowledge Mesh](https://synapsekit.github.io/synapsekit-docs/docs/mesh/)** — local-first, incremental indexing across every project on your machine, with a `synapsekit mesh` CLI and MCP tools.
-- **[AgentSwarm](https://synapsekit.github.io/synapsekit-docs/docs/agents/swarm)** — market-based agent routing (sealed-bid, Vickrey, English, coalition auctions) with reputation learning.
-- **[SelfImprovingAgent](https://synapsekit.github.io/synapsekit-docs/docs/agents/self-improving)** — eval-gated agent config evolution with signed patches and canary rollout. Run the offline [`self_evolving_agent.ipynb`](examples/self_evolving_agent.ipynb) notebook to watch held-out accuracy climb 40% → 100% while every bad patch is blocked by the gate.
-- **[NeuroSymbolicAgent](https://synapsekit.github.io/synapsekit-docs/docs/agents/neuro-symbolic)** — LLM-extracted constraints verified by Z3 / SymPy / MiniZinc / Prolog backends.
-- **[EdgeRuntime](https://synapsekit.github.io/synapsekit-docs/docs/edge/)** — local-first inference with policy-gated cloud fallback and PII redaction before any data leaves the device.
+**Trust and verification**
+- [Verifiable Agents](https://synapsekit.github.io/synapsekit-docs/docs/audit/): signed, hash-chained audit trails (Ed25519, pluggable KMS/BYOK) with a standalone verifier (`MATCH` / `DRIFT` / `UNVERIFIABLE`)
+- [Guardrails](CHANGELOG.md): policy middleware for any `BaseLLM`, block/redact/flag/require-human modes, prompt-injection and jailbreak guards, PII redaction, HIPAA/GDPR/PCI-DSS rulepacks, signed audit trail
+- [NeuroSymbolicAgent](https://synapsekit.github.io/synapsekit-docs/docs/agents/neuro-symbolic): LLM-proposed constraints checked by Z3, SymPy, MiniZinc, or Prolog
+- Orchestration Eval: detects handoff loops, per-transfer context loss, and non-deterministic mis-routing across multi-agent runs
 
-**2.0.1** adds live observability and new paradigm agents, and hardens security — **additive only, no breaking changes**. Highlights: **[SynapseKit Live](https://synapsekit.github.io/synapsekit-docs/docs/observability/live)** (a zero-dependency real-time run dashboard), **[official Docker images on GHCR](https://synapsekit.github.io/synapsekit-docs/docs/getting-started/docker)**, **[OKF knowledge-format support](https://synapsekit.github.io/synapsekit-docs/docs/rag/okf)**, the **[Universal Memory Protocol](https://synapsekit.github.io/synapsekit-docs/docs/memory/universal-protocol)**, a **[Digital Twin Agent](https://synapsekit.github.io/synapsekit-docs/docs/agents/digital-twin)**, a **[Time-Travel Codebase agent](https://synapsekit.github.io/synapsekit-docs/docs/agents/time-travel)**, and a **[signed agent marketplace](https://synapsekit.github.io/synapsekit-docs/docs/agents/marketplace)**. It also closes out Self-Evolving and Neuro-Symbolic, and an OSV audit bumped 8 dependencies off known-vulnerable versions so a fresh install resolves to **0 known vulnerabilities**. Upgrade with `pip install --upgrade synapsekit`.
+**Memory and retrieval**
+- [Living Memory](https://synapsekit.github.io/synapsekit-docs/docs/memory/living-memory): agents propose signed, diffable memory patches instead of overwriting files
+- [Property Graph RAG](https://synapsekit.github.io/synapsekit-docs/docs/rag/property-graph) and [WorldModelRAG](https://synapsekit.github.io/synapsekit-docs/docs/rag/world-model): vector search fused with graph traversal and temporal, causal knowledge graphs
+- [Personal Knowledge Mesh](https://synapsekit.github.io/synapsekit-docs/docs/mesh/): local-first incremental indexing across your machine, with a `synapsekit mesh` CLI and MCP tools
+- A dedicated embeddings and reranker provider layer (9 hosted providers), cloud persistence backends for agent memory and graph checkpoints
 
-Upgrading from 1.x? See the **[Migrating to 2.0 guide](https://synapsekit.github.io/synapsekit-docs/docs/getting-started/migration-2.0)** — there are a few breaking changes (the top-level `AgentMemory` export, audit `verify()` trust anchoring, bundle schema 1.2, and default LLM retries).
+**Agents**
+- [AgentSwarm](https://synapsekit.github.io/synapsekit-docs/docs/agents/swarm): market-based routing (sealed-bid, Vickrey, English, coalition auctions) with reputation learning
+- [SelfImprovingAgent](https://synapsekit.github.io/synapsekit-docs/docs/agents/self-improving): eval-gated config evolution with signed patches and canary rollout
+- [EdgeRuntime](https://synapsekit.github.io/synapsekit-docs/docs/edge/): local-first inference with policy-gated cloud fallback and on-device PII redaction
+- Hive Mode, Agent OS Shell, Dream Mode, Ambient daemon, and a Code Archaeology agent for local, autonomous, and history-aware agent workflows
+
+**Operations**
+- [SynapseKit Live](https://synapsekit.github.io/synapsekit-docs/docs/observability/live): a zero-dependency real-time dashboard for every LLM call, tool, retrieval, and cost
+- [Official Docker images on GHCR](https://synapsekit.github.io/synapsekit-docs/docs/getting-started/docker), a CAG/RAG router with a llama.cpp KV-cache backend, and a sandboxed PC Twin for safe automation
+
+Full history in [CHANGELOG.md](CHANGELOG.md). Upgrading from 1.x? See the [Migrating to 2.0 guide](https://synapsekit.github.io/synapsekit-docs/docs/getting-started/migration-2.0).
 
 ```bash
 pip install --upgrade synapsekit
@@ -205,13 +215,7 @@ agent = ComputerUseAgent(
 result = await agent.run("Open the legacy form, enter the invoice total, and stop.")
 ```
 
-Install optional runtime dependencies only when you need real screen control:
-
-```bash
-pip install "synapsekit[computer-use]"
-```
-
-Read [Computer Use Safety](docs/computer-use-safety.md) before running this against real desktops, browsers, credentials, or production systems.
+Install with `pip install "synapsekit[computer-use]"`. Read [Computer Use Safety](docs/computer-use-safety.md) before running this against real desktops, browsers, credentials, or production systems.
 
 ---
 
@@ -219,241 +223,55 @@ Read [Computer Use Safety](docs/computer-use-safety.md) before running this agai
 
 SynapseKit is for Python developers who want to ship LLM features without fighting their framework.
 
-- **Burned LangChain users** — hit a wall with debugging, dependency hell, or version churn and want full control back
-- **Async backend engineers** — building FastAPI services where LangChain's sync-first model feels bolted on
-- **Cost-conscious teams** — startups and teams who don't want a LangSmith subscription for basic observability
-- **ML engineers** — building RAG or agent pipelines who need full control over retrieval, prompting, and tool use
+- **Burned LangChain users**: hit a wall with debugging, dependency hell, or version churn and want full control back
+- **Async backend engineers**: building FastAPI services where LangChain's sync-first model feels bolted on
+- **Cost-conscious teams**: startups that don't want a LangSmith subscription for basic observability
+- **ML engineers**: building RAG or agent pipelines who need full control over retrieval, prompting, and tool use
 
 ---
 
-## What it covers
+## Core Capabilities
 
-<div align="center">
-
-<table>
-<tr>
-<td width="50%">
-
-**🗂 RAG Pipelines**<br/>
-Retrieval-augmented generation with streaming, BM25 reranking, conversation memory, and token tracing. Load from PDFs, URLs, CSVs, HTML, directories, and more.
-
-</td>
-<td width="50%">
-
-**🤖 Agents**<br/>
-ReAct loop (any LLM) and native function calling (OpenAI / Anthropic / Gemini / Mistral). 48 built-in tools including calculator, Python REPL, code interpreter, web search, SQL, HTTP, shell, Twilio, arxiv, pubmed, wolfram, wikipedia, and more. Fully extensible.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-**🔀 Graph Workflows**<br/>
-DAG-based async pipelines. Nodes run in waves — parallel nodes execute concurrently. Conditional routing, typed state with reducers, fan-out/fan-in, SSE streaming, event callbacks, human-in-the-loop, checkpointing, and Mermaid export.
-
-</td>
-<td width="50%">
-
-**🧠 LLM Providers**<br/>
-OpenAI, Anthropic, Ollama, Gemini, Cohere, Mistral, Bedrock, Azure OpenAI, Groq, DeepSeek, OpenRouter, Together, Fireworks, Cerebras, Cloudflare, Moonshot, Perplexity, Vertex AI, Zhipu, AI21 Labs, Databricks, Baidu ERNIE, llama.cpp, LM Studio, Minimax, Aleph Alpha, Hugging Face, SambaNova, xAI, NovitaAI, Writer — all behind one interface. Auto-detected from the model name. Swap without rewriting.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-**🗄 Vector Stores**<br/>
-InMemory (built-in, `.npz` persistence), ChromaDB, FAISS, Qdrant, Pinecone, Weaviate, PGVector, Milvus, LanceDB, SQLiteVec, MongoDB Atlas, Redis, Elasticsearch, OpenSearch, Supabase, Cassandra, DuckDB, ClickHouse, Marqo, Typesense, Vespa, Zilliz, Turbopuffer, Azure AI Search, Vertex AI Vector Search, SingleStore, TiDB Vector, Couchbase, SurrealDB, Deep Lake, MyScale. One interface for all 31 backends.
-
-</td>
-<td width="50%">
-
-**🔧 Utilities**<br/>
-Output parsers (JSON, Pydantic, List), prompt templates (standard, chat, few-shot), token tracing with cost estimation.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-**🧠 Reasoning LLMs** *(new in v1.7.0)*<br/>
-`ReasoningLLM` unified adapter for o1/o3, Claude thinking, Gemini thinking, DeepSeek R1, and Qwen QwQ. Returns `ReasoningResponse` with answer, thinking trace, and token breakdown. `stream()` yields `ReasoningStreamChunk` with `is_thinking` flag.
-
-</td>
-<td width="50%">
-
-**⚖️ Cost-Quality Routing** *(new in v1.7.0)*<br/>
-`CostQualityRouter` explores candidates round-robin then exploits the cheapest model meeting your quality threshold. Tracks Pareto frontier of cost vs quality. Optional `budget_per_call_usd` hard cap.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-**🎯 Prompt Optimization** *(new in v1.7.0)*<br/>
-`PromptOptimizer` scores prompt variants against an `@eval_case` suite and returns the best `PromptCandidate`. Supports LLM-generated variants or manual lists. Budget-aware early stopping.
-
-</td>
-<td width="50%">
-
-**🌐 Federated Retrieval** *(new in v1.7.0)*<br/>
-`FederatedRetriever` fans out to multiple local retrievers and remote HTTP endpoints in parallel. RRF, normalised score fusion, or round-robin interleave. Near-duplicate dedup, per-source timeouts.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-**🧠 Smart Context Manager** *(new)*<br/>
-`SmartContextManager` manages context windows hierarchically: static system prompt → running summary → search results → recent messages. Injects Anthropic `cache_control` tags on system and summary blocks automatically, cutting repeated-call costs by up to 80%. Sliding window prunes and summarises older turns via a cheap LLM. `pip install synapsekit[anthropic]`.
-
-</td>
-<td width="50%">
-
-**✅ Structured Output** *(new)*<br/>
-`StructuredOutput` wraps any LLM and validates its response against a Pydantic v2 model. Retries with a corrective prompt on JSON or schema failures, with configurable backoff and optional fallback provider. Streaming support via `IncrementalJSONBuffer` — detects complete JSON mid-stream and validates immediately.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-**🕸 Agent Federation** *(new)*<br/>
-`AgentFederation` routes prompts across a registry of agents using round-robin, capacity-aware, or cost-aware strategies. `InMemoryAgentRegistry` and `RedisAgentRegistry` track agents with heartbeat-based health checks and stale pruning. Tag and tool-based discovery filters. `LocalAgentClient` for in-process agents, custom `AgentClient` for remote. `pip install synapsekit[redis]` for Redis registry.
-
-`AgentSwarm` adds market-based routing on top of the same registry. Agents bid with estimated cost, quality, and confidence; `MarketPolicy` supports sealed-bid, Vickrey, English, multi-winner, and coalition auctions; `Reputation` tracks per-agent, per-task-category outcomes. Deterministic tests and demos can set `seed=42`. See `examples/agent_swarm_market.py`.
-
-```python
-from synapsekit import AgentSwarm, BidStrategy, MarketPolicy
-
-swarm = AgentSwarm(
-    agents=[researcher, coder, critic, planner, summarizer],
-    market=MarketPolicy(
-        bid_strategy=BidStrategy.cost_quality_pareto(),
-        auction_type="sealed_bid",
-        budget_per_task=10_000,
-        seed=42,
-    ),
-)
-
-result = await swarm.execute("Write a market analysis on quantum compute startups")
-print(result.winners)
-print(swarm.trace_to_mermaid())
-```
-
-</td>
-<td width="50%">
-
-**🔁 Continuous Fine-Tuning Pipeline** *(new)*<br/>
-`ContinuousTrainer` closes the loop from production feedback to a deployed fine-tuned model. `FeedbackCollector` batches samples async; `TrainingDataGenerator` exports JSONL and preference pairs; `OpenAIFineTuneProvider` / `AnthropicFineTuneProvider` submit and poll jobs; `ABTestRouter` sticky-routes traffic by SHA-256 bucket; `AutoRolloutManager` stages rollout with latency/cost/quality regression guards; `CostBenefitAnalyzer` projects ROI and payback days. `pip install synapsekit[training]`.
-
-`SelfImprovingAgent` closes the loop for agent configuration. It observes `FeedbackCollector` traces, proposes signed `AgentConfigPatch` diffs, validates prompt candidates with `EvalSuite` / `PromptOptimizer`, and canaries accepted changes through `AutoRolloutManager`. Patches are eval-blocked by default and reversible via `agent.rollback(patch_id)`. Inspect the audit trail with `agent.evolution_history()` or `synapsekit agent inspect-evolution <agent-id>`. See `examples/self_improving_agent.py`.
-
-</td>
-</tr>
-<tr>
-<td width="50%" colspan="2">
-
-**⚡ Performance suite** *(new in v1.7.0)*<br/>
-`orjson` fast JSON across all hot paths · `uvloop` event loop · `xxhash` cache key hashing (5–10× faster) · pre-allocated vector buffer (O(1) amortised inserts) · vectorised MMR · `__slots__` on hot classes · optional Rust extension for chunking and hashing. Install with `pip install synapsekit[performance]`.
-
-</td>
-</tr>
-<tr>
-<td width="50%" colspan="2">
-
-**🧪 EvalCI — LLM Quality Gates**<br/>
-GitHub Action that runs `@eval_case` suites on every PR and blocks merge if quality drops. No infrastructure, 2-minute setup. Score, cost, and latency tracked per case. Works with any LLM provider. → [GitHub Marketplace](https://github.com/marketplace/actions/evalci-by-synapsekit) · [Docs](https://synapsekit.github.io/synapsekit-docs/docs/evalci/overview)
-
-</td>
-</tr>
-<tr>
-<td width="50%" colspan="2">
-
-**📊 Agent Benchmarking**<br/>
-Evaluate your agents against industry-standard benchmarks like GAIA, SWE-bench, WebArena, and AgentBench directly from the CLI. Generate leaderboards to compare performance across tasks.
-
-**🧪 EvalHub Community Suites**<br/>
-Run shared community eval suites with `synapsekit bench` and compare aggregate score against baseline.
-</td>
-</tr>
-</table>
-
-</div>
+| | |
+|---|---|
+| **🗂 RAG Pipelines** | Streaming retrieval, BM25 reranking, conversation memory, token tracing. Load from PDFs, URLs, CSVs, HTML, directories, and 83 total sources. |
+| **🤖 Agents** | ReAct loop (any LLM) and native function calling (OpenAI, Anthropic, Gemini, Mistral). 56 built-in tools, fully extensible. |
+| **🔀 Graph Workflows** | DAG-based async pipelines. Nodes run in waves; parallel nodes execute concurrently. Conditional routing, typed state, fan-out/fan-in, SSE streaming, human-in-the-loop, checkpointing, Mermaid export. |
+| **🧠 LLM Providers** | 46 providers behind one `BaseLLM` interface, auto-detected from the model name. Swap without rewriting. |
+| **🗄 Vector Stores** | 32 backends behind one `VectorStore` interface, from a zero-dependency `InMemoryVectorStore` to managed cloud services. |
+| **🔎 Embeddings & Reranking** | A provider-agnostic `BaseEmbeddings` contract and `Reranker` interface across 9 hosted providers. |
+| **🧠 Reasoning LLMs** | `ReasoningLLM` unifies o1/o3, Claude thinking, Gemini thinking, DeepSeek R1, and Qwen QwQ behind one adapter with a thinking trace. |
+| **⚖️ Cost-Quality Routing** | `CostQualityRouter` explores candidates then exploits the cheapest model meeting your quality bar, with an optional hard budget cap. |
+| **🎯 Prompt Optimization** | `PromptOptimizer` scores prompt variants against an `@eval_case` suite and returns the best candidate. |
+| **🌐 Federated Retrieval** | `FederatedRetriever` fans out to local and remote retrievers in parallel with RRF or score-fusion merging. |
+| **🧠 Smart Context Manager** | Hierarchical context windows with automatic Anthropic prompt-caching tags, cutting repeated-call cost significantly. |
+| **✅ Structured Output** | Wraps any LLM, validates against a Pydantic v2 model, retries on schema failure, streams via incremental JSON parsing. |
+| **🕸 Agent Federation & Swarm** | Route prompts across a registry of agents by cost, capacity, or market-based bidding, with reputation tracking. |
+| **🔁 Continuous Fine-Tuning** | `ContinuousTrainer` closes the loop from production feedback to a deployed fine-tuned model, with A/B routing and rollout guards. |
+| **🧪 EvalCI** | GitHub Action that runs `@eval_case` suites on every PR and blocks merge on quality regression. [Marketplace](https://github.com/marketplace/actions/evalci-by-synapsekit) |
+| **📊 Agent Benchmarking** | Run GAIA, SWE-bench, WebArena, and AgentBench from the CLI, or publish and pull community eval suites via `synapsekit bench`. |
+| **⚡ Performance** | `orjson`, `uvloop`, `xxhash`, vectorized MMR, `__slots__` on hot paths, optional Rust extension. `pip install synapsekit[performance]`. |
 
 ### ReasoningAgent (automatic routing)
 
 ```python
-import asyncio
-
 from synapsekit import ReasoningAgent, ReasoningAgentConfig
-
 from synapsekit.agents.tools import CalculatorTool
-
 from synapsekit.llm import LLMConfig, OpenAILLM, ReasoningLLM
-
-fast = OpenAILLM(
-    LLMConfig(model="gpt-4o-mini", api_key="sk-...", provider="openai")
-)
-
-reasoning = ReasoningLLM(model="o3", api_key="sk-...")
-
 
 agent = ReasoningAgent(
     ReasoningAgentConfig(
-        fast_llm=fast,
-        reasoning_llm=reasoning,
+        fast_llm=OpenAILLM(LLMConfig(model="gpt-4o-mini", api_key="sk-...", provider="openai")),
+        reasoning_llm=ReasoningLLM(model="o3", api_key="sk-..."),
         tools=[CalculatorTool()],
         agent_type="function_calling",
     )
 )
 
-
-async def main():
-
-    answer = await agent.run("Solve: find the eigenvalues of [[2,1],[1,2]]")
-    print(answer)
-
-
-asyncio.run(main())
+answer = await agent.run("Solve: find the eigenvalues of [[2,1],[1,2]]")
 ```
 
-### EvalHub quick usage
-
-```bash
-synapsekit bench --list
-synapsekit bench --suite community/customer-support --model gpt-4o-mini
-synapsekit bench --publish my_evals/ --name myorg/rag-finance
-```
-
-Docs: [docs/evalhub.md](docs/evalhub.md)
-
----
-
-## Neuro-Symbolic Verification
-
-SynapseKit can pair a reasoning model with a symbolic solver so the model proposes
-formal constraints and the solver verifies the answer.
-
-```python
-from synapsekit import NeuroSymbolicAgent, ReasoningLLM, Z3Backend
-
-agent = NeuroSymbolicAgent(
-    llm=ReasoningLLM("claude-3-7-sonnet-latest", api_key="..."),
-    verifier=Z3Backend(),
-    on_unverified="retry",
-    max_proposals=3,
-)
-
-result = await agent.solve("Find an integer x where x > 3 and x < 5.")
-
-print(result.answer)
-print(result.verified)
-print(result.proof.model)
-```
-
-Install solver integrations with `pip install synapsekit[symbolic]`. Prolog
-verification uses the `swipl` executable when `PrologBackend` is selected.
+Routes simple requests to the fast model and escalates to the reasoning model only when needed. Full docs: [docs/evalhub.md](docs/evalhub.md) for EvalHub, [CHANGELOG.md](CHANGELOG.md) for everything else.
 
 ---
 
@@ -461,21 +279,25 @@ verification uses the `swipl` executable when `PrologBackend` is selected.
 
 <div align="center">
 
-### One interface. 190+ integrations. Zero lock-in.
+### One interface. 226+ integrations. Zero lock-in.
 
-| 🧠 LLM Providers | 🗄 Vector Stores | 📂 Data Loaders | 🔧 Agent Tools |
-|:---:|:---:|:---:|:---:|
-| **46** | **31** | **66** | **50** |
+| 🧠 LLM Providers | 🗄 Vector Stores | 📂 Data Loaders | 🔧 Agent Tools | 🔎 Embeddings |
+|:---:|:---:|:---:|:---:|:---:|
+| **46** | **32** | **83** | **56** | **9** |
 
-Every integration is `pip install synapsekit[name]` — nothing else. Swap providers, vector stores, or loaders without touching your application code.
+Every integration is `pip install synapsekit[name]`, nothing else. Swap providers, vector stores, or loaders without touching your application code.
 
 </div>
 
 > Icons use [Google Favicons](https://google.com/s2/favicons) for reliability across light and dark themes.
 
-### 🧠 LLM Providers — 46 supported
+### 🧠 LLM Providers: 46 supported
 
-> Every provider implements the same `BaseLLM` interface. Auto-detected from model name — `gpt-4o` → OpenAI, `claude-*` → Anthropic, `gemini-*` → Google. **Swap without rewriting.**
+> Every provider implements the same `BaseLLM` interface. Auto-detected from model name: `gpt-4o` → OpenAI, `claude-*` → Anthropic, `gemini-*` → Google. **Swap without rewriting.**
+
+<details>
+<summary><b>Show all 46 providers</b></summary>
+<br/>
 
 <table>
   <tr>
@@ -540,11 +362,17 @@ Every integration is `pip install synapsekit[name]` — nothing else. Swap provi
   </tr>
 </table>
 
+</details>
+
 ---
 
-### 🗄 Vector Stores — 31 backends
+### 🗄 Vector Stores: 32 backends
 
 > All implement `VectorStore` with `add()`, `search()`, `search_mmr()`, `save()`, and `load()`. Built-in `InMemoryVectorStore` needs zero extra deps. Everything else is `pip install synapsekit[name]`.
+
+<details>
+<summary><b>Show all 32 backends</b></summary>
+<br/>
 
 <table>
   <tr>
@@ -576,7 +404,11 @@ Every integration is `pip install synapsekit[name]` — nothing else. Swap provi
   </tr>
 </table>
 
-#### Vector-store integration validation
+</details>
+
+<details>
+<summary>Vector-store integration validation notes</summary>
+<br/>
 
 The issue #888 adapters use the same async contract and have provider-SDK
 contract tests. Their live services require credentials or a provider-managed
@@ -600,11 +432,17 @@ provider adapters; Vertex AI additionally requires `document_store_path` because
 its nearest-neighbour response returns IDs only. The local `save()`/`load()`
 contract is a JSON snapshot that replays documents into the selected backend.
 
+</details>
+
 ---
 
-### 📂 Data Loaders — 66 sources
+### 📂 Data Loaders: 83 sources
 
-> All return `list[Document]` with `.text` and `.metadata`. Every loader has a sync `.load()` and async `.aload()`. Load from disk, cloud, databases, or APIs — same interface everywhere.
+> All return `list[Document]` with `.text` and `.metadata`. Every loader has a sync `.load()` and async `.aload()`, with the same interface across disk, cloud, databases, and APIs.
+
+<details>
+<summary><b>Show all 83 sources</b></summary>
+<br/>
 
 **File Formats**
 
@@ -690,11 +528,17 @@ contract is a JSON snapshot that replays documents into the selected backend.
   </tr>
 </table>
 
+</details>
+
 ---
 
-### 🔧 Agent Tools — 50 built-in
+### 🔧 Agent Tools: 56 built-in
 
 > All implement `BaseTool` with a single async `run()`. Pass any list of tools to `ReActAgent` or `FunctionCallingAgent`. **Write your own in 5 lines.**
+
+<details>
+<summary><b>Show all 56 tools</b></summary>
+<br/>
 
 <table>
   <tr>
@@ -727,6 +571,8 @@ contract is a JSON snapshot that replays documents into the selected backend.
   </tr>
 </table>
 
+</details>
+
 ---
 
 ### 🧠 Memory & Cache Backends
@@ -741,7 +587,7 @@ contract is a JSON snapshot that replays documents into the selected backend.
   </tr>
 </table>
 
-Persistent memory backend configuration and graph-checkpointer parity are documented in [`docs/memory/backends.md`](docs/memory/backends.md).
+10 backends in total, including MongoDB, Firestore, Cosmos DB, and Cassandra alongside the ones shown above. Persistent memory backend configuration and graph-checkpointer parity are documented in [`docs/memory/backends.md`](docs/memory/backends.md).
 
 ### 📡 Observability
 
@@ -753,7 +599,7 @@ Persistent memory backend configuration and graph-checkpointer parity are docume
   </tr>
 </table>
 
-`PrometheusMetrics` records `synapsekit_cost_usd_total`, `synapsekit_tokens_total`, and `synapsekit_latency_seconds` per model/provider. Hooks into the existing `observe` span pipeline — no code changes needed. Helm chart for a Prometheus + Grafana stack ships in `assets/helm/synapsekit-observability/`. `pip install synapsekit[observe]`.
+`PrometheusMetrics` records `synapsekit_cost_usd_total`, `synapsekit_tokens_total`, and `synapsekit_latency_seconds` per model/provider. Hooks into the existing `observe` span pipeline, no code changes needed. Helm chart for a Prometheus + Grafana stack ships in `assets/helm/synapsekit-observability/`. `pip install synapsekit[observe]`.
 
 ### Multi-Hop Knowledge Graph RAG
 
@@ -793,7 +639,7 @@ print(metrics["total_rag_alerts"])
 
 ---
 **Don't see your stack?**
-Every integration is built the same way — most take under an hour.
+Every integration is built the same way. Most take under an hour.
 [Browse `good first issue` →](https://github.com/SynapseKit/SynapseKit/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) · [Contributing guide →](CONTRIBUTING.md) · [Discord →](https://discord.gg/PSuAXHRywJ)
 
 We credit every contributor in the README and send a personal thank-you on Discord.
@@ -829,7 +675,7 @@ poetry add synapsekit[openai]
 poetry add "synapsekit[all]"
 ```
 
-**Docker** — official images on GitHub Container Registry, no Python setup required:
+**Docker.** Official images on GitHub Container Registry, no Python setup required:
 ```bash
 # Core library + CLI
 docker pull ghcr.io/synapsekit/synapsekit:latest
@@ -861,7 +707,7 @@ Everything you need to get started and go deep is in the docs.
 | 🤖 [Agents](https://synapsekit.github.io/synapsekit-docs/docs/agents/overview) | ReAct, function calling, tools, executor |
 | 🔀 [Graph Workflows](https://synapsekit.github.io/synapsekit-docs/docs/graph/overview) | DAG pipelines, conditional routing, parallel execution |
 | 🧠 [LLM Providers](https://synapsekit.github.io/synapsekit-docs/docs/llms/overview) | All 46 providers + ReasoningLLM with examples |
-| 🧪 [EvalCI](https://synapsekit.github.io/synapsekit-docs/docs/evalci/overview) | LLM quality gates on every PR — GitHub Action |
+| 🧪 [EvalCI](https://synapsekit.github.io/synapsekit-docs/docs/evalci/overview) | LLM quality gates on every PR, as a GitHub Action |
 | 📖 [API Reference](https://synapsekit.github.io/synapsekit-docs/docs/api/llm) | Full class and method reference |
 
 ---
@@ -879,7 +725,7 @@ uv run pytest tests/ -q
 
 ## Contributing
 
-Contributions are welcome — bug reports, documentation fixes, new providers, new features.
+Contributions are welcome: bug reports, documentation fixes, new providers, new features.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) to get started. Look for issues tagged [`good first issue`](https://github.com/SynapseKit/SynapseKit/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) if you're new.
 
@@ -887,10 +733,10 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) to get started. Look for issues tagged [
 
 ## Community
 
-- 💬 [Discord](https://discord.gg/PSuAXHRywJ) — chat, help, show and tell
-- 💬 [Discussions](https://github.com/SynapseKit/SynapseKit/discussions) — ask questions, share ideas
-- 🧭 [Discord roles draft](DISCORD_ROLES.md) — proposed roles and permissions for issue #389
-- 🧭 [Discord release webhook draft](DISCORD_RELEASE_WEBHOOKS.md) — automate release announcements for issue #390
+- 💬 [Discord](https://discord.gg/PSuAXHRywJ): chat, help, show and tell
+- 💬 [Discussions](https://github.com/SynapseKit/SynapseKit/discussions): ask questions, share ideas
+- 🧭 [Discord roles draft](DISCORD_ROLES.md): proposed roles and permissions for issue #389
+- 🧭 [Discord release webhook draft](DISCORD_RELEASE_WEBHOOKS.md): automate release announcements for issue #390
 - 🐛 [Bug reports](https://github.com/SynapseKit/SynapseKit/issues/new?template=bug_report.yml)
 - 💡 [Feature requests](https://github.com/SynapseKit/SynapseKit/issues/new?template=feature_request.yml)
 - 🔒 [Security policy](SECURITY.md)
