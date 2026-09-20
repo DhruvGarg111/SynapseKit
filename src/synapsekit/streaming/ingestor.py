@@ -84,6 +84,21 @@ def _payload_text(payload: Any) -> tuple[str, dict[str, Any]]:
     return str(payload), {}
 
 
+def _key_document_id(key: Any) -> str | None:
+    """Canonicalize a source message key into a stable ``document_id``.
+
+    Kafka/Pulsar log-compacted topics already use the message key as the
+    entity identity (a null value on a keyed record is their native tombstone
+    convention), so reusing it here lets ``deleted``-marked documents from any
+    source resolve to the same stable id as their prior insert, not just
+    Debezium CDC records.
+    """
+
+    if key is None:
+        return None
+    return key if isinstance(key, str) else _json_text(key)
+
+
 def _event_document(event: StreamEvent) -> Document:
     """Default JSON/scalar transformer used by the ingestor."""
 
@@ -99,6 +114,9 @@ def _event_document(event: StreamEvent) -> Document:
             "ingestion_id": event.id,
         }
     )
+    document_id = _key_document_id(event.key)
+    if document_id is not None:
+        metadata.setdefault("document_id", document_id)
     metadata.setdefault("ingest_time", cast(datetime, event.ingest_time).isoformat())
     if event.timestamp is not None:
         timestamp = cast(datetime, event.timestamp).isoformat()
@@ -141,6 +159,9 @@ def _decorate_documents(event: StreamEvent, documents: list[Document]) -> list[D
         metadata["event_id"] = event.id
         metadata.setdefault("partition", event.partition)
         metadata.setdefault("offset", event.offset)
+        document_id = _key_document_id(event.key)
+        if document_id is not None:
+            metadata.setdefault("document_id", document_id)
         if event.timestamp is not None:
             timestamp = cast(datetime, event.timestamp).isoformat()
             metadata.setdefault("timestamp", timestamp)
