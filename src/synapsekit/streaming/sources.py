@@ -102,6 +102,15 @@ class KafkaSource:
     ``kafka-python`` is synchronous, so polling, commits, and shutdown are
     delegated to worker threads.  This keeps the public source async-first and
     also makes the adapter usable with Redpanda without a second client.
+
+    Resume-on-restart is handled by Kafka's own consumer-group offset commits
+    (``ack`` commits the consumer's offset), not by the ``CheckpointStore``
+    passed to :class:`StreamingIngestor` -- unlike :class:`KinesisSource` and
+    :class:`PostgresCDCSource`, which have no native resumable consumer group
+    and therefore seek using the checkpoint store instead. Keep ``group_id``
+    stable across restarts if you want Kafka to resume from where it left
+    off; a fresh ``group_id`` restarts from ``auto_offset_reset``. The
+    checkpoint store is still consulted for redelivery dedup either way.
     """
 
     source_name = "kafka"
@@ -254,7 +263,12 @@ class RedpandaSource(KafkaSource):
 
 
 class PulsarSource:
-    """Consume a Pulsar topic through the optional ``pulsar-client`` package."""
+    """Consume a Pulsar topic through the optional ``pulsar-client`` package.
+
+    Like :class:`KafkaSource`, resume-on-restart relies on Pulsar's own
+    subscription cursor (advanced by ``ack``), not on the injected
+    ``CheckpointStore``. Keep ``subscription_name`` stable across restarts.
+    """
 
     source_name = "pulsar"
 
