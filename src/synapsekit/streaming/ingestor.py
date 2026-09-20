@@ -214,6 +214,10 @@ class StreamingIngestor:
         self._stop_event = asyncio.Event()
         self._run_task: asyncio.Task[IngestionStats] | None = None
         self._active = False
+        # Held for the duration of a batch's upsert+commit+ack sequence, so an
+        # external stop() can't tear the source down mid-batch (which would
+        # race an in-flight ack against the source's teardown, see stop()).
+        self._batch_lock = asyncio.Lock()
 
     async def run(self, *, max_events: int | None = None) -> IngestionStats:
         """Run until the source is exhausted, stopped, or ``max_events`` is met."""
@@ -278,10 +282,24 @@ class StreamingIngestor:
         return self._run_task
 
     async def stop(self) -> None:
-        """Request a graceful stop and wait for a background run, if any."""
+        """Request a graceful stop and wait for a background run, if any.
+
+        Calling ``source.stop()`` here (rather than only relying on ``run()``'s
+        own ``finally``) is required to interrupt a source blocked inside its
+        next-event wait -- that's the only way an in-progress ``run()`` task
+        ever notices the stop request. But tearing the source down while a
+        batch is mid upsert/commit/ack would race that batch's acks against
+        the source's teardown, silently dropping already-persisted
+        acknowledgements (e.g. ``KafkaSource.ack`` no-ops once its consumer is
+        gone). ``_batch_lock`` closes that window: it's held for the whole
+        upsert+commit+ack sequence of a batch, so acquiring it here blocks
+        until any in-flight batch has fully acked before the source is
+        stopped.
+        """
 
         self._stop_event.set()
-        await _call_optional(self.source, "stop")
+        async with self._batch_lock:
+            await _call_optional(self.source, "stop")
         task = self._run_task
         if task is not None and task is not asyncio.current_task():
             await task
@@ -291,14 +309,15 @@ class StreamingIngestor:
         for event in events:
             transformed = await _maybe_await(self.transform(event))
             documents.extend(_decorate_documents(event, _as_documents(transformed)))
-        if documents:
-            upsert = getattr(self.target, "upsert", None)
-            if not callable(upsert):
-                raise TypeError("target must expose an async upsert(documents) method")
-            await _maybe_await(upsert(documents))
-        for event in events:
-            await self.checkpoint_store.commit_event(event)
-            await _call_optional(self.source, "ack", event)
+        async with self._batch_lock:
+            if documents:
+                upsert = getattr(self.target, "upsert", None)
+                if not callable(upsert):
+                    raise TypeError("target must expose an async upsert(documents) method")
+                await _maybe_await(upsert(documents))
+            for event in events:
+                await self.checkpoint_store.commit_event(event)
+                await _call_optional(self.source, "ack", event)
         return len(documents)
 
     async def _source_iterator(self) -> AsyncIterable[Any]:
