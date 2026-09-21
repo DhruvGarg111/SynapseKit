@@ -68,7 +68,13 @@ class TestInMemoryVectorStore:
         results = await store.search("visual page", top_k=1)
 
         assert results[0]["metadata"] == metadata[0]
-        assert await store.search("visual page", top_k=1, metadata_filter={"bbox": [1, 2]}) == []
+
+    @pytest.mark.asyncio
+    async def test_search_with_unhashable_filter_value_raises(self, store):
+        await store.add(["visual page"], metadata=[{"bbox": [12.0, 24.0]}])
+
+        with pytest.raises(TypeError, match="hashable"):
+            await store.search("visual page", top_k=1, metadata_filter={"bbox": [1, 2]})
 
     @pytest.mark.asyncio
     async def test_multiple_add_calls_accumulate(self, store):

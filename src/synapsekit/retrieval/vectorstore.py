@@ -122,8 +122,11 @@ class InMemoryVectorStore(VectorStore):
         for k, v in metadata_filter.items():
             try:
                 hash(v)
-            except TypeError:
-                return []
+            except TypeError as exc:
+                raise TypeError(
+                    f"metadata_filter[{k!r}] must be a hashable value, got {type(v).__name__}; "
+                    "unhashable metadata (e.g. a bbox list) is never indexed and can never match"
+                ) from exc
             candidate_sets.append(self._index.get(k, {}).get(v, set()))
         if not candidate_sets or any(not s for s in candidate_sets):
             return []
