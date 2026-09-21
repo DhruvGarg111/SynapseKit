@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
-
 import numpy as np
 import pytest
 
@@ -9,8 +7,10 @@ from synapsekit import RAG
 from synapsekit import MultimodalRAG as TopLevelMultimodalRAG
 from synapsekit.embeddings.multimodal import BaseMultimodalEmbeddings
 from synapsekit.loaders.base import Document
+from synapsekit.loaders.pdf import PDFLoader
 from synapsekit.loaders.visual import VisualPage
 from synapsekit.rag.multimodal import MultimodalRAG
+from synapsekit.retrieval.visual import VisualDocumentRetriever
 
 
 class FakeVisualEmbeddings(BaseMultimodalEmbeddings):
@@ -55,15 +55,40 @@ class RecordingPacker:
         return [chunks[-1]]
 
 
+class RecordingAddDocuments:
+    """Stand-in for RAGPipeline.add_documents that records its calls."""
+
+    def __init__(self):
+        self.await_args = None
+        self.await_count = 0
+
+    async def __call__(self, *args, **kwargs):
+        self.await_args = _Args(args, kwargs)
+        self.await_count += 1
+
+
+class _Args:
+    def __init__(self, args, kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+
+class NullRetriever:
+    """Stand-in retriever whose scored-retrieval path always returns nothing."""
+
+    async def retrieve_with_scores(self, *args, **kwargs):
+        return []
+
+
 def _make_rag(**kwargs):
     rag = RAG(model="gpt-4o-mini", api_key="[REDACTED]", **kwargs)
-    rag._pipeline.add_documents = AsyncMock()
-    rag._pipeline.config.retriever.retrieve_with_scores = AsyncMock(return_value=[])
+    rag._pipeline.add_documents = RecordingAddDocuments()
+    rag._pipeline.config.retriever = NullRetriever()
     return rag
 
 
 @pytest.mark.asyncio
-async def test_rag_visual_backend_indexes_visual_pages_and_text_fallback(tmp_path):
+async def test_rag_visual_backend_indexes_visual_pages_and_text_fallback(tmp_path, monkeypatch):
     pdf_path = tmp_path / "scan.pdf"
     pdf_path.write_bytes(b"pdf")
     rag = _make_rag(
@@ -71,11 +96,11 @@ async def test_rag_visual_backend_indexes_visual_pages_and_text_fallback(tmp_pat
         visual_renderer=FakeRenderer(),
     )
 
-    with patch(
-        "synapsekit.loaders.pdf.PDFLoader.aload",
-        new=AsyncMock(return_value=[Document(text="OCR fallback", metadata={"page": 4})]),
-    ):
-        await rag.add_async(str(pdf_path))
+    async def fake_aload(self):
+        return [Document(text="OCR fallback", metadata={"page": 4})]
+
+    monkeypatch.setattr(PDFLoader, "aload", fake_aload)
+    await rag.add_async(str(pdf_path))
 
     assert rag.visual_retriever is not None
     assert rag.visual_retriever.page_count == 1
@@ -124,10 +149,16 @@ async def test_rag_visual_ask_sends_page_images_and_appends_citations():
 @pytest.mark.asyncio
 async def test_rag_without_visual_backend_keeps_text_pipeline_path():
     rag = _make_rag()
-    rag._pipeline.ask = AsyncMock(return_value="text answer")
+    calls = []
+
+    async def fake_ask(query):
+        calls.append(query)
+        return "text answer"
+
+    rag._pipeline.ask = fake_ask
 
     assert await rag.ask("question") == "text answer"
-    rag._pipeline.ask.assert_awaited_once_with("question")
+    assert calls == ["question"]
 
 
 def test_multimodal_rag_is_a_named_rag_facade():
@@ -160,7 +191,7 @@ async def test_rag_visual_stream_appends_citations_and_uses_anthropic_blocks():
 
 
 @pytest.mark.asyncio
-async def test_rag_visual_ingestion_keeps_text_fallback_when_renderer_fails(tmp_path):
+async def test_rag_visual_ingestion_keeps_text_fallback_when_renderer_fails(tmp_path, monkeypatch):
     pdf_path = tmp_path / "broken.pdf"
     pdf_path.write_bytes(b"pdf")
     rag = _make_rag(
@@ -168,15 +199,15 @@ async def test_rag_visual_ingestion_keeps_text_fallback_when_renderer_fails(tmp_
         visual_renderer=BrokenRenderer(),
     )
 
-    with patch(
-        "synapsekit.loaders.pdf.PDFLoader.aload",
-        new=AsyncMock(return_value=[Document(text="OCR fallback", metadata={"page": 1})]),
-    ):
-        await rag.add_async(str(pdf_path))
+    async def fake_aload(self):
+        return [Document(text="OCR fallback", metadata={"page": 1})]
+
+    monkeypatch.setattr(PDFLoader, "aload", fake_aload)
+    await rag.add_async(str(pdf_path))
 
     assert rag.visual_retriever is not None
     assert rag.visual_retriever.page_count == 0
-    rag._pipeline.add_documents.assert_awaited_once()
+    assert rag._pipeline.add_documents.await_count == 1
 
 
 @pytest.mark.asyncio
@@ -234,7 +265,7 @@ async def test_rag_visual_text_only_provider_does_not_stringify_image_blocks():
 
 
 def test_rag_rejects_visual_backend_and_retriever_together():
-    visual_retriever = MagicMock()
+    visual_retriever = VisualDocumentRetriever(FakeVisualEmbeddings())
     with pytest.raises(ValueError, match="either visual_retriever"):
         RAG(
             model="gpt-4o-mini",
