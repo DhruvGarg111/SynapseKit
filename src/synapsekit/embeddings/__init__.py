@@ -1,8 +1,18 @@
 from .backend import SynapsekitEmbeddings
+from .multimodal import (
+    BaseMultimodalEmbeddings,
+    ImageTextEmbeddings,
+    MultimodalEmbeddings,
+)
 
 __all__ = [
     "ONNXEmbeddings",
     "SynapsekitEmbeddings",
+    "BaseMultimodalEmbeddings",
+    "ImageTextEmbeddings",
+    "MultimodalEmbeddings",
+    "ColPaliEmbeddings",
+    "ColQwenEmbeddings",
     "CohereEmbeddings",
     "GeminiEmbeddings",
     "HuggingFaceEmbeddings",
@@ -25,6 +35,8 @@ _BACKENDS = {
     "NomicEmbeddings": ".nomic",
     "MixedbreadEmbeddings": ".mixedbread",
     "HuggingFaceEmbeddings": ".huggingface",
+    "ColPaliEmbeddings": ".colpali",
+    "ColQwenEmbeddings": ".colpali",
 }
 
 

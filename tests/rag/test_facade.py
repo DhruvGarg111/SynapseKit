@@ -129,6 +129,27 @@ class TestRAGFacade:
         rag._pipeline._splitter.split.assert_called_once()
 
     @pytest.mark.asyncio
+    async def test_add_async_autodetects_powerpoint_file(self, tmp_path):
+        deck_file = tmp_path / "deck.pptx"
+        deck_file.write_bytes(b"pptx")
+
+        rag = RAG(model="gpt-4o-mini", api_key="[REDACTED]")
+        _patch_rag(rag)
+
+        with patch(
+            "synapsekit.loaders.pptx.PowerPointLoader.aload",
+            new=AsyncMock(
+                return_value=[
+                    Document(text="slide text", metadata={"page": 1, "source_type": "pptx"})
+                ]
+            ),
+        ) as powerpoint_aload:
+            await rag.add_async(str(deck_file))
+
+        powerpoint_aload.assert_awaited_once()
+        rag._pipeline._splitter.split.assert_called_once()
+
+    @pytest.mark.asyncio
     async def test_add_async_uses_mime_type_for_webm_video(self, tmp_path):
         video_file = tmp_path / "demo.webm"
         video_file.write_bytes(b"video")

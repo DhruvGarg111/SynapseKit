@@ -9,6 +9,8 @@ from .base import BaseLLM, LLMConfig
 class AnthropicLLM(BaseLLM):
     """Anthropic Messages API with async streaming."""
 
+    supports_multimodal = True
+
     def __init__(self, config: LLMConfig) -> None:
         super().__init__(config)
         self._client: Any = None

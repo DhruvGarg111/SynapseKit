@@ -234,12 +234,12 @@ SynapseKit is for Python developers who want to ship LLM features without fighti
 
 | | |
 |---|---|
-| **🗂 RAG Pipelines** | Streaming retrieval, BM25 reranking, conversation memory, token tracing. Load from PDFs, URLs, CSVs, HTML, directories, and 83 total sources. |
+| **🗂 RAG Pipelines** | Streaming retrieval, BM25 reranking, conversation memory, token tracing, and optional visual-page retrieval for scanned PDFs and slide decks. Load from PDFs, URLs, CSVs, HTML, directories, and 83 total sources. |
 | **🤖 Agents** | ReAct loop (any LLM) and native function calling (OpenAI, Anthropic, Gemini, Mistral). 56 built-in tools, fully extensible. |
 | **🔀 Graph Workflows** | DAG-based async pipelines. Nodes run in waves; parallel nodes execute concurrently. Conditional routing, typed state, fan-out/fan-in, SSE streaming, human-in-the-loop, checkpointing, Mermaid export. |
 | **🧠 LLM Providers** | 46 providers behind one `BaseLLM` interface, auto-detected from the model name. Swap without rewriting. |
 | **🗄 Vector Stores** | 32 backends behind one `VectorStore` interface, from a zero-dependency `InMemoryVectorStore` to managed cloud services. |
-| **🔎 Embeddings & Reranking** | A provider-agnostic `BaseEmbeddings` contract and `Reranker` interface across 9 hosted providers. |
+| **🔎 Embeddings & Reranking** | A provider-agnostic `BaseEmbeddings` contract and `Reranker` interface across 9 hosted providers, plus lazy ColPali/ColQwen multimodal embeddings for visual-page retrieval. |
 | **🧠 Reasoning LLMs** | `ReasoningLLM` unifies o1/o3, Claude thinking, Gemini thinking, DeepSeek R1, and Qwen QwQ behind one adapter with a thinking trace. |
 | **⚖️ Cost-Quality Routing** | `CostQualityRouter` explores candidates then exploits the cheapest model meeting your quality bar, with an optional hard budget cap. |
 | **🎯 Prompt Optimization** | `PromptOptimizer` scores prompt variants against an `@eval_case` suite and returns the best candidate. |
