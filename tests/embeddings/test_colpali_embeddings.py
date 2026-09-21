@@ -88,6 +88,13 @@ def test_multimodal_embedding_exports_are_lazy_and_public():
     assert embeddings.MultimodalEmbeddings is not None
 
 
+def test_colpali_prepare_image_rejects_empty_base64_data():
+    image = SimpleNamespace(source_type="base64", data="")
+
+    with pytest.raises(ValueError, match="empty data"):
+        ColPaliEmbeddings._prepare_image(image)
+
+
 def test_colpali_import_does_not_eagerly_import_torch_or_transformers():
     import subprocess
     import sys

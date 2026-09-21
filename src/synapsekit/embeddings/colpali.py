@@ -198,8 +198,12 @@ class ColPaliEmbeddings(BaseMultimodalEmbeddings):
             return image.url
         if source_type in {"base64", "file"}:
             data = getattr(image, "data", "")
-            if data:
-                return ColPaliEmbeddings._open_image(base64.b64decode(data))
+            if not data:
+                raise ValueError(
+                    f"Image with source_type={source_type!r} has empty data; "
+                    "cannot prepare it for embedding"
+                )
+            return ColPaliEmbeddings._open_image(base64.b64decode(data))
         return image
 
     @staticmethod
