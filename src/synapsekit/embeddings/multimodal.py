@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import logging
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 ImageInput = str | Path | bytes | Any
 
@@ -85,6 +88,16 @@ class BaseMultimodalEmbeddings(ABC):
                 )
 
             norms = np.linalg.norm(array, axis=1, keepdims=True)
+            zero_rows = int(np.count_nonzero(norms == 0))
+            if zero_rows:
+                logger.warning(
+                    "%s returned %d degenerate zero-norm %s token vector(s) at index %d; "
+                    "left unnormalized (zero) and will contribute zero similarity in MaxSim",
+                    type(self).__name__,
+                    zero_rows,
+                    modality,
+                    index,
+                )
             norms = np.where(norms == 0, 1.0, norms)
             normalized = (array / norms).astype(np.float32)
             if self.dimensions is None:
