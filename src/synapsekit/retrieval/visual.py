@@ -133,10 +133,13 @@ class VisualDocumentRetriever:
             pages = list(self._pages)
             page_embeddings = list(self._page_embeddings)
 
-        scored = [
-            (index, maxsim(query_embedding, embedding))
-            for index, embedding in enumerate(page_embeddings)
-        ]
+        def _score_all() -> list[tuple[int, float]]:
+            return [
+                (index, maxsim(query_embedding, embedding))
+                for index, embedding in enumerate(page_embeddings)
+            ]
+
+        scored = await asyncio.to_thread(_score_all)
         scored.sort(key=lambda item: (-item[1], item[0]))
         return [
             {
