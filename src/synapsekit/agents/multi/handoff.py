@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
@@ -87,6 +88,7 @@ class HandoffChain:
                     "agent": current_agent,
                     "input": current_input,
                     "output": result,
+                    "timestamp": time.time(),
                 }
             )
 
