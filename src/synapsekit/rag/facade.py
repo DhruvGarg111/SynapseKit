@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import inspect
 import json
+import logging
 import mimetypes
 from collections.abc import AsyncGenerator
 from contextlib import suppress
@@ -25,6 +26,8 @@ from ..retrieval.retriever import Retriever
 from ..retrieval.vectorstore import InMemoryVectorStore
 from ..retrieval.visual import VisualDocumentRetriever
 from .pipeline import RAGConfig, RAGPipeline
+
+logger = logging.getLogger(__name__)
 
 IMAGE_EXTENSIONS = {
     ".png",
@@ -161,6 +164,11 @@ class RAG:
                     except Exception:
                         # Text/OCR ingestion remains usable when an optional
                         # renderer cannot open a file or is unavailable.
+                        logger.warning(
+                            "Visual rendering failed for %s; continuing with text-only ingestion",
+                            path,
+                            exc_info=True,
+                        )
                         pages = []
                     if pages:
                         await self._visual_retriever.add_pages(pages)
