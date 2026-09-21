@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import mimetypes
 import os
 from pathlib import Path
@@ -9,6 +10,8 @@ from typing import Any
 
 from ..llm.multimodal import ImageContent, MultimodalMessage
 from .base import Document
+
+logger = logging.getLogger(__name__)
 
 
 class ImageLoader:
@@ -41,6 +44,12 @@ class ImageLoader:
         if self._llm is None:
             return [Document(text=f"[Image: {self._path}]", metadata=metadata)]
         if getattr(self._llm, "supports_multimodal", True) is False:
+            logger.warning(
+                "ImageLoader: %s does not declare supports_multimodal=True; "
+                "falling back to placeholder text for %s instead of captioning",
+                type(self._llm).__name__,
+                self._path,
+            )
             return [Document(text=f"[Image: {self._path}]", metadata=metadata)]
 
         image = ImageContent.from_file(self._path)
