@@ -433,8 +433,14 @@ class RAG:
         return run_sync(self.ask(query, **kw))
 
     async def _ask_visual(self, query: str, **kw: Any) -> str:
+        fallback_kw = dict(kw)
         top_k = self._visual_query_top_k(kw.pop("top_k", None))
         visual_results, text_results = await self._retrieve_visual_context(query, top_k)
+        if not visual_results:
+            # No visual page actually matches this query -- answer through the
+            # plain text pipeline instead of framing the prompt around
+            # nonexistent visual evidence.
+            return await self._pipeline.ask(query, **fallback_kw)
         messages = self._build_visual_messages(query, visual_results, text_results)
         tracer = self._pipeline.config.tracer
         t0 = tracer.start_timer() if tracer else 0.0
@@ -454,8 +460,13 @@ class RAG:
         return answer
 
     async def _stream_visual(self, query: str, **kw: Any) -> AsyncGenerator[str]:
+        fallback_kw = dict(kw)
         top_k = self._visual_query_top_k(kw.pop("top_k", None))
         visual_results, text_results = await self._retrieve_visual_context(query, top_k)
+        if not visual_results:
+            async for token in self._pipeline.stream(query, **fallback_kw):
+                yield token
+            return
         messages = self._build_visual_messages(query, visual_results, text_results)
         tracer = self._pipeline.config.tracer
         t0 = tracer.start_timer() if tracer else 0.0
