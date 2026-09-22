@@ -221,6 +221,19 @@ async def test_router_composes_with_fallback_chain_for_outage() -> None:
     assert chain.used_model is backup
 
 
+@pytest.mark.asyncio
+async def test_router_stream_raises_like_generate_when_all_candidates_fail() -> None:
+    only = FailingLLM("only", provider="only-provider")
+    router = CostQualityRouter(candidates=[only], explore_n=0, pricing_table=PricingTable())
+
+    with pytest.raises(TimeoutError, match="provider outage"):
+        async for _ in router.stream("hello"):
+            pass
+
+    with pytest.raises(TimeoutError, match="provider outage"):
+        await router.generate("hello")
+
+
 def test_carbon_estimator_provider_and_region() -> None:
     estimator = CarbonEstimator({("cheap-provider", "eu-west"): 1.5})
     assert estimator.estimate("cheap-provider", "eu-west", 2_000) == pytest.approx(3.0)

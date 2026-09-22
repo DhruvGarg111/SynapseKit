@@ -1101,7 +1101,7 @@ class CostQualityRouter(BaseLLM):
                         ordered[index + 1].config.model,
                         str(exc),
                     )
-        if isinstance(last_exc, BudgetExceededError):
+        if last_exc is not None:
             raise last_exc
         return
 
