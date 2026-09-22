@@ -83,6 +83,14 @@ behavior composes with routing. Pass `PrometheusMetrics()` for cost, remaining
 budget, and arbitrage-savings metrics, and pass `CarbonEstimator` only when
 your organization has a preferred regional intensity table.
 
+**Precondition:** once a `budget_ledger` is configured and a call's
+`tenant_id`/`api_key_id` has a budget policy attached, every candidate model
+routed to must have a registered `ModelPricing` entry. Requests to models
+missing from the pricing table raise `BudgetExceededError("...pricing...")`
+rather than silently treating them as free — register custom/self-hosted
+model pricing with `pricing_table.register(ModelPricing(...))` before
+enabling budgets for them.
+
 ## Exporters
 
 Supported exporter names:
