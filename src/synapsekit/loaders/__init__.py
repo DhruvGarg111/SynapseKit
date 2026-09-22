@@ -11,6 +11,15 @@ from .onedrive import OneDriveLoader
 from .s3 import S3Loader
 from .salesforce import SalesforceLoader
 from .text import StringLoader, TextLoader
+from .visual import (
+    DefaultPageRenderer,
+    ImagePageRenderer,
+    PageRenderer,
+    PDFPageRenderer,
+    PowerPointPageRenderer,
+    VisualPage,
+    VisualPageRenderer,
+)
 
 __all__ = [
     "AirtableLoader",
@@ -88,6 +97,13 @@ __all__ = [
     "TSVLoader",
     "TwitterLoader",
     "VideoLoader",
+    "VisualPage",
+    "PageRenderer",
+    "DefaultPageRenderer",
+    "ImagePageRenderer",
+    "PDFPageRenderer",
+    "PowerPointPageRenderer",
+    "VisualPageRenderer",
     "WebLoader",
     "WikipediaLoader",
     "FigmaLoader",
@@ -122,6 +138,13 @@ _LOADERS = {
     "DocxLoader": ".docx",
     "AudioLoader": ".audio",
     "VideoLoader": ".video",
+    "VisualPage": ".visual",
+    "PageRenderer": ".visual",
+    "DefaultPageRenderer": ".visual",
+    "ImagePageRenderer": ".visual",
+    "PDFPageRenderer": ".visual",
+    "PowerPointPageRenderer": ".visual",
+    "VisualPageRenderer": ".visual",
     "XMLLoader": ".xml_loader",
     "YAMLLoader": ".yaml_loader",
     "DiscordLoader": ".discord",

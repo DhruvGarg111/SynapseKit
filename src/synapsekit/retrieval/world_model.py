@@ -555,7 +555,12 @@ class InMemoryWorldGraphBackend:
         if subject_id is None or object_id is None:
             return None
 
-        edge_id = f"{subject_id}:{_slug(relation.predicate)}:{object_id}"
+        base_edge_id = f"{subject_id}:{_slug(relation.predicate)}:{object_id}"
+        edge_id = base_edge_id
+        if edge_id in self.edges and relation.valid_at is not None:
+            existing = self.edges[edge_id]
+            if existing.valid_at is not None and existing.valid_at != relation.valid_at:
+                edge_id = f"{base_edge_id}:{relation.valid_at.isoformat()}"
         now = datetime.now(UTC)
         if edge_id not in self.edges:
             self.edges[edge_id] = WorldModelEdge(
@@ -576,7 +581,11 @@ class InMemoryWorldGraphBackend:
             edge.confidence = max(edge.confidence, relation.confidence)
             edge.causal = edge.causal or relation.causal
             edge.valid_at = edge.valid_at or relation.valid_at
-            edge.valid_until = edge.valid_until or relation.valid_until
+            # Unlike valid_at (versioned above via a distinct edge_id when it
+            # changes), valid_until has no such fork: prefer a newly supplied
+            # bound over a stale one so a streaming correction (e.g. a later
+            # CDC update narrowing an interval) can actually take effect.
+            edge.valid_until = relation.valid_until or edge.valid_until
             edge.provenance.add(doc_id)
             edge.updated_at = now
 
@@ -1387,7 +1396,7 @@ class WorldModelRAG:
         # Collect all (text, metadata, doc_id) first, then add to the vector index
         # in a single batched call (embedding backends embed batches far more
         # efficiently than one text at a time).
-        prepared: list[tuple[str, str]] = []
+        prepared: list[tuple[str, str, datetime | None]] = []
         batch_texts: list[str] = []
         batch_metadata: list[dict] = []
         for doc in docs:
@@ -1395,18 +1404,32 @@ class WorldModelRAG:
             if not text.strip():
                 continue
             doc_id = self._doc_id(metadata)
-            prepared.append((text, doc_id))
+            # Only "valid_at" is treated as an event timestamp here. Loaders
+            # outside the streaming package (Kafka, Slack, Teams, ...) already
+            # stamp an unrelated "timestamp" key (e.g. message send time), so
+            # falling back to it would silently repurpose it as extracted-fact
+            # validity for every pre-existing ingest() caller, not just
+            # streaming sources -- which set "valid_at" explicitly.
+            event_timestamp = _parse_datetime(metadata.get("valid_at"))
+            prepared.append((text, doc_id, event_timestamp))
             batch_texts.append(text)
             batch_metadata.append({**metadata, "source": doc_id, "world_model_doc_id": doc_id})
 
         if batch_texts:
             await self.vector_retriever.add(batch_texts, batch_metadata)
 
-        for text, doc_id in prepared:
+        for text, doc_id, event_timestamp in prepared:
             extraction = await self.extractor.extract(text, self.extraction)
             for entity in extraction.entities:
                 self.graph_backend.upsert_entity(entity, doc_id)
             for event in extraction.events:
+                if event.timestamp is None and event_timestamp is not None:
+                    event = EventMention(
+                        name=event.name,
+                        participants=event.participants,
+                        timestamp=event_timestamp,
+                        confidence=event.confidence,
+                    )
                 self.graph_backend.add_event(event, doc_id)
             for relation in extraction.relations:
                 score = await self.causal_linker.score(relation, text)
@@ -1417,7 +1440,14 @@ class WorldModelRAG:
                             predicate=relation.predicate,
                             object=relation.object,
                             confidence=score,
-                            valid_at=relation.valid_at,
+                            # Prefer the document's own timestamp over the
+                            # extractor's when both are present: it's
+                            # deterministic (e.g. a streamed event's fixed
+                            # event time), while an LLM-extracted valid_at can
+                            # vary between runs on re-extraction of the same
+                            # text, which would otherwise fork the graph edge
+                            # id on every replay (see upsert_relation).
+                            valid_at=event_timestamp or relation.valid_at,
                             valid_until=relation.valid_until,
                             causal=relation.causal,
                         ),

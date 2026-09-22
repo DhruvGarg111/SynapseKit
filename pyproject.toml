@@ -66,6 +66,12 @@ anthropic = ["anthropic>=0.25"]
 semantic = []
 colbert = []
 pdf = ["pypdf>=6.15.0"]
+visual = [
+    "pypdf>=6.15.0",
+    "pymupdf>=1.24",
+    "python-pptx>=0.6",
+    "transformers>=5.10.0",
+]
 wikipedia = ["wikipedia-api>=0.6"]
 arxiv = ["arxiv>=2.0"]
 html = ["beautifulsoup4>=4.12", "lxml>=6.1.0"]
@@ -201,6 +207,16 @@ figma = ["httpx>=0.27"]
 graphql = ["httpx>=0.27"]
 iceberg = ["pyiceberg>=0.7", "pyarrow>=14.0"]
 kafka = ["kafka-python>=2.0"]
+streaming-kafka = ["kafka-python>=2.0"]
+streaming-pulsar = ["pulsar-client>=3.5"]
+streaming-kinesis = ["boto3>=1.34"]
+streaming-cdc = ["psycopg[binary]>=3.1"]
+streaming = [
+    "kafka-python>=2.0",
+    "pulsar-client>=3.5",
+    "boto3>=1.34",
+    "psycopg[binary]>=3.1",
+]
 linear = ["httpx>=0.27"]
 monday = ["httpx>=0.27"]
 shopify = ["httpx>=0.27"]
@@ -236,6 +252,9 @@ all = [
     "openai>=1.0",
     "anthropic>=0.25",
     "pypdf>=6.13.3",
+    "pymupdf>=1.24",
+    "python-pptx>=0.6",
+    "transformers>=5.10.0",
     "wikipedia-api>=0.6",
     "arxiv>=2.0",
     "beautifulsoup4>=4.12",
@@ -369,6 +388,12 @@ integration = [
     "elasticsearch>=8.0,<9",
     "pymongo>=4.0",
     "google-cloud-firestore>=2.13",
+    # azure.cosmos.aio.CosmosClient (used by CosmosDBMemoryBackend/CosmosDBCheckpointer
+    # and by the cosmos_config test fixture's readiness probe) requires an async
+    # HTTP transport; aiohttp is azure-core's default and was previously missing
+    # from this group, masked because the Cosmos test always skipped before ever
+    # reaching a real connection attempt.
+    "aiohttp>=3.14.3",
     "azure-cosmos>=4.0",
     "qdrant-client>=1.9",
     "weaviate-client>=4.0",
@@ -416,6 +441,9 @@ python-source = "src"
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "integration: tests that require external services or Docker",
+]
 # Windows asyncio transport cleanup warnings are harmless GC artifacts
 filterwarnings = [
     "ignore::pytest.PytestUnraisableExceptionWarning",
@@ -586,6 +614,7 @@ databricks-sql-connector = "databricks"
 deltalake = "deltalake"
 pyiceberg = "pyiceberg"
 kafka-python = "kafka"
+pulsar-client = "pulsar"
 simple-salesforce = "simple_salesforce"
 hubspot-api-client = "hubspot"
 azure-storage-blob = "azure"
@@ -598,9 +627,10 @@ snowflake-connector-python = "snowflake"
 "opensearch-py" = "opensearchpy"
 "deepgram-sdk" = "deepgram"
 "piper-tts" = "piper"
+pymupdf = ["pymupdf", "fitz"]
 
 [tool.deptry.per_rule_ignores]
 DEP001 = ["sqlalchemy", "pydantic", "aiohttp", "opentelemetry", "whisper", "botocore", "aiomcache", "nest_asyncio", "huggingface_hub", "serpapi", "weaviate", "uvicorn", "starlette", "tomli", "pyttsx3", "faster_whisper", "sounddevice", "soundfile", "aiokafka", "kafka", "typesense", "prometheus_client", "sentence_transformers", "llama_cpp", "ragatouille", "torch", "httpx", "google-genai"]
-DEP002 = ["numpy", "rank-bm25", "beautifulsoup4", "lxml", "pillow", "pyasn1", "httplib2", "faiss-cpu", "google-generativeai", "tavily-python", "youtube-search-python", "psycopg", "google-search-results", "discord.py", "google-auth", "weaviate-client", "pymilvus", "lancedb", "pgvector", "slack-sdk", "supabase", "pymongo", "azure-storage-blob", "azure-cosmos", "google-cloud-firestore", "elasticsearch", "tzdata", "torchaudio", "python-multipart", "z3-solver", "pyautogui"]
+DEP002 = ["numpy", "rank-bm25", "beautifulsoup4", "lxml", "pillow", "pyasn1", "httplib2", "faiss-cpu", "google-generativeai", "tavily-python", "youtube-search-python", "psycopg", "google-search-results", "discord.py", "google-auth", "weaviate-client", "pymilvus", "lancedb", "pgvector", "slack-sdk", "supabase", "pymongo", "azure-storage-blob", "azure-cosmos", "google-cloud-firestore", "elasticsearch", "tzdata", "torchaudio", "python-multipart", "z3-solver", "pyautogui", "pulsar-client"]
 DEP003 = ["sqlalchemy", "botocore", "nest_asyncio", "opentelemetry", "starlette", "uvicorn", "tomli", "torch"]
 DEP004 = ["pydantic"]

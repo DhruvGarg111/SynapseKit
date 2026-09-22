@@ -41,6 +41,7 @@ from .step_back import StepBackRetriever
 from .strategies.colbert import ColBERTRetriever
 from .token_counting import TokenCounter
 from .vectorstore import InMemoryVectorStore
+from .visual import VisualDocumentRetriever, maxsim
 from .voyage_reranker import VoyageReranker
 from .world_model import (
     CausalLinker,
@@ -130,6 +131,8 @@ __all__ = [
     "TokenCounter",
     "TypesenseVectorStore",
     "VectorStore",
+    "VisualDocumentRetriever",
+    "maxsim",
     "VespaVectorStore",
     "VoyageReranker",
     "WeaviateVectorStore",

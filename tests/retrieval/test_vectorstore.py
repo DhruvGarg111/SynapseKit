@@ -61,6 +61,22 @@ class TestInMemoryVectorStore:
         assert "doc1" in sources or "doc2" in sources
 
     @pytest.mark.asyncio
+    async def test_structured_metadata_is_stored_without_inverted_index_failure(self, store):
+        metadata = [{"bbox": [12.0, 24.0, 120.0, 240.0], "source": "scan.pdf"}]
+
+        await store.add(["visual page"], metadata=metadata)
+        results = await store.search("visual page", top_k=1)
+
+        assert results[0]["metadata"] == metadata[0]
+
+    @pytest.mark.asyncio
+    async def test_search_with_unhashable_filter_value_raises(self, store):
+        await store.add(["visual page"], metadata=[{"bbox": [12.0, 24.0]}])
+
+        with pytest.raises(TypeError, match="hashable"):
+            await store.search("visual page", top_k=1, metadata_filter={"bbox": [1, 2]})
+
+    @pytest.mark.asyncio
     async def test_multiple_add_calls_accumulate(self, store):
         await store.add(["first"])
         await store.add(["second"])

@@ -5419,6 +5419,40 @@ wheels = [
 ]
 
 [[package]]
+name = "pulsar-client"
+version = "3.13.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "certifi" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/43/d1/588228438017ceee45a7fcf83d0dd8cd5d80a628b8d0a8ff8dbe12baf06d/pulsar_client-3.13.0-cp311-cp311-macosx_13_0_universal2.whl", hash = "sha256:f2eb3afc2e1c002bc74eadd3f3ba49fb4c337d59e83f0861c79a901b62098ec0", size = 10730053, upload-time = "2026-07-02T09:20:26.754Z" },
+    { url = "https://files.pythonhosted.org/packages/0d/c0/b35d12a40a5c53625b7b7a5fd4b237b8acf274e7485a5b47157c490b8e68/pulsar_client-3.13.0-cp311-cp311-manylinux_2_28_aarch64.whl", hash = "sha256:7c87a6944d5531b59b556b6078b9a0fb6d2dceff7a2edc8875bba43ed37c7f6a", size = 7635458, upload-time = "2026-07-02T09:20:30.81Z" },
+    { url = "https://files.pythonhosted.org/packages/01/95/360f78e5b16c7f96825274483c9a3e6d37c8878c2727592b4e21ecdb6624/pulsar_client-3.13.0-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:f958a6149b28cfe354d33f2af229e2257d0bc4e1f195eefbd4cbae5d7fd7961d", size = 7630025, upload-time = "2026-07-02T09:20:34.572Z" },
+    { url = "https://files.pythonhosted.org/packages/c1/61/d10ad860a0d8f899ce450e0a462b6e83ee5839ed29030f920652989d828a/pulsar_client-3.13.0-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:f3f769e3128366df63296d7caa4934721f70083def652cb34fb0b55538ba325b", size = 8157148, upload-time = "2026-07-02T09:20:39.407Z" },
+    { url = "https://files.pythonhosted.org/packages/b3/72/6111ebf31cc4d096343a84f5d636bea0dcc940a9e8a751a74dae7871b539/pulsar_client-3.13.0-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:8ce5c596a82b4b43d677d7ba82e6f8a553c6ea50ac7cb42bde986868dc851437", size = 7992879, upload-time = "2026-07-02T09:20:43.984Z" },
+    { url = "https://files.pythonhosted.org/packages/af/9c/149ddd39dead27d9b6ac03c8b4ee588798d9b3cc297d11e44922b3c9c824/pulsar_client-3.13.0-cp311-cp311-win_amd64.whl", hash = "sha256:3111678f649afb78ec4d807d7fd352836912537a9cd1ca2ad43c1f992eb83301", size = 3932604, upload-time = "2026-07-02T09:20:47.737Z" },
+    { url = "https://files.pythonhosted.org/packages/f6/62/1ab6eb1d1e8f9fab917e691655f9589279ec643aaaeb650ba4f134003fcb/pulsar_client-3.13.0-cp312-cp312-macosx_13_0_universal2.whl", hash = "sha256:f2f24bacf9ad7999a2c9813db68b438b776a2bc5440ed1bbb9cc62acbfc4f85d", size = 10753952, upload-time = "2026-07-02T09:21:00.035Z" },
+    { url = "https://files.pythonhosted.org/packages/96/4a/0bf1648b69ab8a6b84079c42b38744b5e815dc80dcc5b24ef0159063fc9b/pulsar_client-3.13.0-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:03244a8af1886591ee56afb1228b85f8b678f980464a2847ebb9a152d8b5e36a", size = 7641537, upload-time = "2026-07-02T09:21:04.889Z" },
+    { url = "https://files.pythonhosted.org/packages/ca/1c/c62cd2dc12c73383ae74e835c8057baaead77097bf897f1c802a4f8a4d91/pulsar_client-3.13.0-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:863fd7b8cdc162f3cc0ea7217c37604c66a7bc9bb5cd554566c5d07f89a50e5e", size = 7642737, upload-time = "2026-07-02T09:21:37.133Z" },
+    { url = "https://files.pythonhosted.org/packages/6e/3b/c0049394b7caa42168dfce10e84bba219a3b1d9466ef9a3fdab65455e9c6/pulsar_client-3.13.0-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:da4fe1a58e81d1a3131aa8edb44eac91c9931ad6f8e21b2e3409cb8ee8e9173d", size = 8158732, upload-time = "2026-07-02T09:21:41.617Z" },
+    { url = "https://files.pythonhosted.org/packages/26/74/b82320196cfde96304110c4ea69dff5b9e86e3f9d5daae6f33baa838e89d/pulsar_client-3.13.0-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:55a060c9a7b58e4daa80aa8126e340d378e0f55e5616523574d3144f5a649347", size = 8003510, upload-time = "2026-07-02T09:21:45.847Z" },
+    { url = "https://files.pythonhosted.org/packages/cd/1c/471b4cdc329e01b42f35145c678e2ac1f375c9de3e718a8f15d931af48c1/pulsar_client-3.13.0-cp312-cp312-win_amd64.whl", hash = "sha256:f5d5dcfc45f73e05db754f2372d278c1183a674c6e2b91416a4f6c829911365b", size = 3933736, upload-time = "2026-07-02T09:21:51.941Z" },
+    { url = "https://files.pythonhosted.org/packages/2b/f7/3cfe69993054e94e3e4a4de39d135aef70be12bfc9282d37ceda89b526d8/pulsar_client-3.13.0-cp313-cp313-macosx_13_0_universal2.whl", hash = "sha256:0e76acbc9ca5515650e940a0bb10c45860aa14707bb755dde01d0eb011606d77", size = 10755334, upload-time = "2026-07-02T09:21:56.719Z" },
+    { url = "https://files.pythonhosted.org/packages/eb/5f/39091328c997125706518da1860d7410b5cc1a3bef5846a489ec26c185c7/pulsar_client-3.13.0-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:7cc1cb49a29a85b8469b42d3a088c0fde639887e0b06120d92c34a9412296528", size = 7643372, upload-time = "2026-07-02T09:22:00.417Z" },
+    { url = "https://files.pythonhosted.org/packages/df/f8/e78b52cd028ac912a23b39cc0d820e6783cb4ed71df25cb770cb1ce1ffe4/pulsar_client-3.13.0-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:afa143cbadbe0e13c3afcc3925442ee67a3b611d28110462fbcd37fc95cdcd94", size = 7641926, upload-time = "2026-07-02T09:22:03.761Z" },
+    { url = "https://files.pythonhosted.org/packages/93/19/6748ee7b20de8b74f23b61d7664849492c46af1fd269d4d4ac621c8ec8a7/pulsar_client-3.13.0-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:2cbcae67dc46c3b85288984a51ee0c194f8898cba54fc31b08eeffef8b113a30", size = 8161502, upload-time = "2026-07-02T09:22:07.776Z" },
+    { url = "https://files.pythonhosted.org/packages/6e/d1/4d2c735a8a2988b710911d7b0ed371bac60da30747ad4827abe1ba73b9e6/pulsar_client-3.13.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:21c241e7a7f359928f677a97bf7e9b31723f575cc9adc0e09350f5e5a5c1be53", size = 8004562, upload-time = "2026-07-02T09:22:11.281Z" },
+    { url = "https://files.pythonhosted.org/packages/e9/8d/75405f5fc2541f295fe74c999e5239332540a27590800d00173549e05bdb/pulsar_client-3.13.0-cp313-cp313-win_amd64.whl", hash = "sha256:56109a622fd5373f7971a0e052732dbbcdd0030b7e69c06377cd49763903df20", size = 3933831, upload-time = "2026-07-02T09:22:14.003Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/d7/d1fe1e8e6e37bbc0454e5eaddf354c69ecf5be00bfbfea6c6e4015c64109/pulsar_client-3.13.0-cp314-cp314-macosx_13_0_universal2.whl", hash = "sha256:cf62d0ea76b3dee86536115b9e5b5ecc8087920196afea23fd04d8b38ff0c275", size = 10742295, upload-time = "2026-07-02T09:22:21.381Z" },
+    { url = "https://files.pythonhosted.org/packages/26/9d/29754da5168da73597071656f344efa91cde6edfba8e45426c70b90b83b2/pulsar_client-3.13.0-cp314-cp314-manylinux_2_28_aarch64.whl", hash = "sha256:6060e6856dad29231aba5464941c3154f5ef3175d7d8f98c9edf994df6cd8820", size = 7644768, upload-time = "2026-07-02T09:22:25.083Z" },
+    { url = "https://files.pythonhosted.org/packages/12/97/9e878f005cdbaab43ae9d6ac1600fc139ed83825dfb55ce07c7cdb0a796a/pulsar_client-3.13.0-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:edd8ffd12cf3dd4b72b080e815652f0c2f18045b5e9b779e63e43caad470e834", size = 7642379, upload-time = "2026-07-02T09:22:28.888Z" },
+    { url = "https://files.pythonhosted.org/packages/80/88/ba0dee2c9e93188fcba50b19b879242cc7ba4620557a155d04d81682e67c/pulsar_client-3.13.0-cp314-cp314-musllinux_1_2_aarch64.whl", hash = "sha256:25d56f51895a01ae885e71ae3f65369496462139bb506450fa11c1c28941177a", size = 8163723, upload-time = "2026-07-02T09:22:33.643Z" },
+    { url = "https://files.pythonhosted.org/packages/17/26/1bfc34008bfb4007f12707b13fe0f1cb1c6ce2f493d6ca4d0b99c8a8d4b9/pulsar_client-3.13.0-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:d2f65f2e697d20dbef2a9f04763bada0e20ff34e13650204f95d9acbfed1ec1e", size = 8005834, upload-time = "2026-07-02T09:22:37.846Z" },
+    { url = "https://files.pythonhosted.org/packages/4f/ae/b1e0ee8dd8a0bb14d4ef3e48474886fc4d77036b3c7fe0346805652f071a/pulsar_client-3.13.0-cp314-cp314-win_amd64.whl", hash = "sha256:43aa8b5532aa4ca9417342a4c5a0fcf9e03f9b1a64177be5a2420dea08547685", size = 4057946, upload-time = "2026-07-02T09:22:40.591Z" },
+]
+
+[[package]]
 name = "pure-eval"
 version = "0.2.3"
 source = { registry = "https://pypi.org/simple" }
@@ -6151,6 +6185,24 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ae/6a/e80da7594ee598a776972d09e2813df2b06b3bc29218f440631dfa7c78a8/pymsgbox-2.0.1.tar.gz", hash = "sha256:98d055c49a511dcc10fa08c3043e7102d468f5e4b3a83c6d3c61df722c7d798d", size = 20768, upload-time = "2025-09-09T00:38:56.863Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6f/3e/08c8cac81b2b2f7502746e6b9c8e5b0ec6432cd882c605560fc409aaf087/pymsgbox-2.0.1-py3-none-any.whl", hash = "sha256:5de8ec19bca2ca7e6c09d39c817c83f17c75cee80275235f43a9931db699f73b", size = 9994, upload-time = "2025-09-09T00:38:55.672Z" },
+]
+
+[[package]]
+name = "pymupdf"
+version = "1.28.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/fb/b6761fa2d5266f2cdb24c3b91f4023070ab7848381417678e7a289a1d52a/pymupdf-1.28.2.tar.gz", hash = "sha256:5e0be7908a715aa20333caddd73f1d6f01e4cd0c26e869fa2dd0b7f344da2249", size = 87903557, upload-time = "2026-08-06T21:43:23.321Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b4/51/550c9a75c4ff3245cb4ecb7bb95cbe2ab7374230b8e2b7a1f7259444150b/pymupdf-1.28.2-cp310-abi3-macosx_10_15_x86_64.whl", hash = "sha256:5fc315b425ff1f7afdd1ea2f348205cb19b806767daae7ce4d64115799c2bae1", size = 24645079, upload-time = "2026-08-06T21:37:25.001Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/01/3591f781b417b382a8487a2356e927acfe858b1043bab0ec47f6805bb109/pymupdf-1.28.2-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:7113846b35dbf0a033f088e4f4fb543dabeb4b0b12c112966a1ca1ee2d5eacae", size = 23875605, upload-time = "2026-08-06T21:37:40.369Z" },
+    { url = "https://files.pythonhosted.org/packages/d2/86/4a68f080b71b46802178346af46486e1697508e760855ff5f3b218a6dff7/pymupdf-1.28.2-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:3050a233dde1211efe89ada74e2add6238436434159f46097a1423aad2842545", size = 25095554, upload-time = "2026-08-06T21:37:58.485Z" },
+    { url = "https://files.pythonhosted.org/packages/c7/06/dace3e27af26690cb20bead80dbac42941b0841eb689b8aabbd67dde16f0/pymupdf-1.28.2-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:397d6715c1f0df7548a92d0afd8ce370fc48fa47aeefac16be2bc04a16a8227f", size = 25762500, upload-time = "2026-08-06T21:38:17.438Z" },
+    { url = "https://files.pythonhosted.org/packages/e5/61/4146dfa1d8172a1ce8d59f0eed94896ddefb8deb2274534d0522fbb8abf5/pymupdf-1.28.2-cp310-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:f89fb2d86d07d643a269f17a093105057e20c79c1d06c103b53600067b6d2b01", size = 25986309, upload-time = "2026-08-06T21:38:35.472Z" },
+    { url = "https://files.pythonhosted.org/packages/52/60/1fb6e64676f7500ebe89054b9e5bbbe14d3101c92d5f1a40ac9a35227673/pymupdf-1.28.2-cp310-abi3-win32.whl", hash = "sha256:530ef543a3885b3b81cb72a854e7c5a625a9233201221132bb6c31698c6a2bdb", size = 18525353, upload-time = "2026-08-06T21:38:47.697Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/61/d563bbccba262f9dd6d2d35ccb72593648184d886188efb12d9ce8f34dd6/pymupdf-1.28.2-cp310-abi3-win_amd64.whl", hash = "sha256:ebd244918798502d7b4504c90410d1711a4d7675a32584ca30f1bab419ecbffe", size = 19826532, upload-time = "2026-08-06T21:39:00.213Z" },
+    { url = "https://files.pythonhosted.org/packages/e2/93/08f404a1f0155fe24137cf2d3aabd3e2b4b08c62053ed89c60f2611be3e9/pymupdf-1.28.2-cp310-abi3-win_arm64.whl", hash = "sha256:ffe91a24edc75c80da2a4b62f50fc0f54632d34fc8fe4cbc48e5c7ff07cf8fb4", size = 19759252, upload-time = "2026-08-06T21:39:12.937Z" },
+    { url = "https://files.pythonhosted.org/packages/58/8c/d897dcd32a25b58186c968b15ce4324ca029e9d96460de12325314e390be/pymupdf-1.28.2-cp313-abi3-pyemscripten_2025_0_wasm32.whl", hash = "sha256:2e1b574c0fd2cb238021033fd3c0f9c4388816638df064e4bfb56d9d81736dc8", size = 18399403, upload-time = "2026-08-06T21:39:25.008Z" },
+    { url = "https://files.pythonhosted.org/packages/f6/f1/de34a1c53fe2bf8c6e71db84b0ced782d408970c9810d2b456a2ae96814c/pymupdf-1.28.2-cp314-cp314t-manylinux_2_28_x86_64.whl", hash = "sha256:fd481ed48bef56305c41fb7e05a055c03345c899c7b101dad086258b438f8168", size = 25802333, upload-time = "2026-08-06T21:39:41.426Z" },
 ]
 
 [[package]]
@@ -10375,8 +10427,10 @@ all = [
     { name = "pyiceberg" },
     { name = "pymilvus" },
     { name = "pymongo" },
+    { name = "pymupdf" },
     { name = "pymysql" },
     { name = "pypdf" },
+    { name = "python-pptx" },
     { name = "pyyaml" },
     { name = "qdrant-client" },
     { name = "redis" },
@@ -10392,6 +10446,7 @@ all = [
     { name = "supabase" },
     { name = "surrealdb" },
     { name = "tavily-python" },
+    { name = "transformers" },
     { name = "turbopuffer" },
     { name = "uvicorn", extra = ["standard"] },
     { name = "weaviate-client" },
@@ -10782,6 +10837,24 @@ sql = [
 sqlite-vec = [
     { name = "sqlite-vec" },
 ]
+streaming = [
+    { name = "boto3" },
+    { name = "kafka-python" },
+    { name = "psycopg", extra = ["binary"] },
+    { name = "pulsar-client" },
+]
+streaming-cdc = [
+    { name = "psycopg", extra = ["binary"] },
+]
+streaming-kafka = [
+    { name = "kafka-python" },
+]
+streaming-kinesis = [
+    { name = "boto3" },
+]
+streaming-pulsar = [
+    { name = "pulsar-client" },
+]
 supabase = [
     { name = "supabase" },
 ]
@@ -10828,6 +10901,12 @@ vespa = [
 ]
 video = [
     { name = "openai" },
+]
+visual = [
+    { name = "pymupdf" },
+    { name = "pypdf" },
+    { name = "python-pptx" },
+    { name = "transformers" },
 ]
 vllm = [
     { name = "openai" },
@@ -10919,6 +10998,7 @@ dev = [
     { name = "tzdata" },
 ]
 integration = [
+    { name = "aiohttp" },
     { name = "asyncpg" },
     { name = "azure-cosmos" },
     { name = "azure-storage-blob" },
@@ -10978,6 +11058,8 @@ requires-dist = [
     { name = "boto3", marker = "extra == 'bedrock'", specifier = ">=1.34" },
     { name = "boto3", marker = "extra == 'dynamodb'", specifier = ">=1.34" },
     { name = "boto3", marker = "extra == 's3'", specifier = ">=1.34" },
+    { name = "boto3", marker = "extra == 'streaming'", specifier = ">=1.34" },
+    { name = "boto3", marker = "extra == 'streaming-kinesis'", specifier = ">=1.34" },
     { name = "cartesia", marker = "extra == 'voice-cartesia'", specifier = ">=0.1" },
     { name = "cassandra-driver", marker = "extra == 'cassandra'", specifier = ">=3.28" },
     { name = "chromadb", marker = "extra == 'all'", specifier = ">=0.5,<1.0.0" },
@@ -11087,6 +11169,8 @@ requires-dist = [
     { name = "huggingface-hub", marker = "extra == 'huggingface'", specifier = ">=0.20" },
     { name = "kafka-python", marker = "extra == 'all'", specifier = ">=2.0" },
     { name = "kafka-python", marker = "extra == 'kafka'", specifier = ">=2.0" },
+    { name = "kafka-python", marker = "extra == 'streaming'", specifier = ">=2.0" },
+    { name = "kafka-python", marker = "extra == 'streaming-kafka'", specifier = ">=2.0" },
     { name = "kuzu", marker = "extra == 'all'", specifier = ">=0.8" },
     { name = "kuzu", marker = "extra == 'kuzu'", specifier = ">=0.8" },
     { name = "kuzu", marker = "extra == 'mesh'", specifier = ">=0.8" },
@@ -11144,6 +11228,10 @@ requires-dist = [
     { name = "psycopg", extras = ["binary"], marker = "extra == 'all'", specifier = ">=3.1" },
     { name = "psycopg", extras = ["binary"], marker = "extra == 'pgvector'", specifier = ">=3.1" },
     { name = "psycopg", extras = ["binary"], marker = "extra == 'postgres'", specifier = ">=3.1" },
+    { name = "psycopg", extras = ["binary"], marker = "extra == 'streaming'", specifier = ">=3.1" },
+    { name = "psycopg", extras = ["binary"], marker = "extra == 'streaming-cdc'", specifier = ">=3.1" },
+    { name = "pulsar-client", marker = "extra == 'streaming'", specifier = ">=3.5" },
+    { name = "pulsar-client", marker = "extra == 'streaming-pulsar'", specifier = ">=3.5" },
     { name = "pyairtable", marker = "extra == 'airtable'", specifier = ">=2.0" },
     { name = "pyairtable", marker = "extra == 'all'", specifier = ">=2.0" },
     { name = "pyarrow", marker = "extra == 'all'", specifier = ">=14.0" },
@@ -11160,13 +11248,18 @@ requires-dist = [
     { name = "pymongo", marker = "extra == 'all'", specifier = ">=4.0" },
     { name = "pymongo", marker = "extra == 'mongodb'", specifier = ">=4.0" },
     { name = "pymongo", marker = "extra == 'mongodb-vector'", specifier = ">=4.0" },
+    { name = "pymupdf", marker = "extra == 'all'", specifier = ">=1.24" },
+    { name = "pymupdf", marker = "extra == 'visual'", specifier = ">=1.24" },
     { name = "pymysql", marker = "extra == 'all'", specifier = ">=1.1" },
     { name = "pymysql", marker = "extra == 'tidb'", specifier = ">=1.1" },
     { name = "pypdf", marker = "extra == 'all'", specifier = ">=6.13.3" },
     { name = "pypdf", marker = "extra == 'pdf'", specifier = ">=6.15.0" },
+    { name = "pypdf", marker = "extra == 'visual'", specifier = ">=6.15.0" },
     { name = "python-docx", marker = "extra == 'docx'", specifier = ">=1.0" },
     { name = "python-multipart", marker = "extra == 'mcp'", specifier = ">=0.0.31" },
+    { name = "python-pptx", marker = "extra == 'all'", specifier = ">=0.6" },
     { name = "python-pptx", marker = "extra == 'pptx'", specifier = ">=0.6" },
+    { name = "python-pptx", marker = "extra == 'visual'", specifier = ">=0.6" },
     { name = "pyttsx3", marker = "extra == 'voice-local'", specifier = ">=2.90" },
     { name = "pyyaml", marker = "extra == 'all'", specifier = ">=6.0" },
     { name = "pyyaml", marker = "extra == 'okf'", specifier = ">=6.0" },
@@ -11214,7 +11307,9 @@ requires-dist = [
     { name = "tavily-python", marker = "extra == 'all'", specifier = ">=0.3" },
     { name = "tavily-python", marker = "extra == 'tavily'", specifier = ">=0.3" },
     { name = "tiktoken", marker = "extra == 'tiktoken'", specifier = ">=0.12" },
+    { name = "transformers", marker = "extra == 'all'", specifier = ">=5.10.0" },
     { name = "transformers", marker = "extra == 'transformers'", specifier = ">=5.10.0" },
+    { name = "transformers", marker = "extra == 'visual'", specifier = ">=5.10.0" },
     { name = "turbopuffer", marker = "extra == 'all'", specifier = ">=0.1" },
     { name = "turbopuffer", marker = "extra == 'turbopuffer'", specifier = ">=0.1" },
     { name = "tzdata", marker = "sys_platform == 'win32' and extra == 'cron'", specifier = ">=2024.1" },
@@ -11236,7 +11331,7 @@ requires-dist = [
     { name = "youtube-transcript-api", marker = "extra == 'youtube-transcript'", specifier = ">=0.6" },
     { name = "z3-solver", marker = "extra == 'symbolic'", specifier = ">=4.13" },
 ]
-provides-extras = ["graph", "openai", "nvidia-nim", "watsonx", "snowflake-cortex", "deepinfra", "nebius", "baseten", "upstage", "reka", "hyperbolic", "friendli", "clarifai", "anthropic", "semantic", "colbert", "pdf", "wikipedia", "arxiv", "html", "web", "chroma", "faiss", "qdrant", "pinecone", "weaviate", "milvus", "lancedb", "sqlite-vec", "kuzu", "mesh", "cassandra", "firestore", "cosmos", "clickhouse", "turbopuffer", "azure-ai-search", "vertex-vector", "singlestore", "tidb", "couchbase", "surrealdb", "deeplake", "myscale", "duckdb-vector", "marqo", "opensearch", "vespa", "replicate", "ollama", "lmstudio", "vllm", "ai21", "cohere", "mistral", "gemini", "voyage", "jina", "nomic", "mixedbread", "bedrock", "gcal-tool", "gmail", "aws-lambda", "rss", "groq", "audio", "video", "voice", "voice-local", "voice-stream", "voice-piper", "voice-cartesia", "voice-elevenlabs", "voice-deepgram", "voice-silero", "training", "cron", "ambient", "excel", "pptx", "docx", "yaml", "okf", "teams", "http", "search", "huggingface", "transformers", "tiktoken", "google-search", "tavily", "youtube", "mcp", "redis", "memcached", "vertex", "cloudflare", "aleph-alpha", "llamacpp", "gpt4all", "onnx", "mlx", "edge", "ernie", "minimax", "serve", "hive", "graph-ui", "observe", "postgres", "pgvector", "wolfram", "dynamodb", "discord", "gcs", "bigquery", "gdrive", "asana", "box", "clickup", "databricks", "delta", "figma", "graphql", "iceberg", "kafka", "linear", "monday", "shopify", "zoom", "git", "gsheets", "jira", "hubspot", "sql", "snowflake", "mongodb", "mongodb-vector", "salesforce", "azure", "s3", "onedrive", "slack", "supabase", "notion", "confluence", "dropbox", "symbolic", "rtf", "epub", "parquet", "elasticsearch", "browser", "computer-use", "youtube-transcript", "airtable", "performance", "all"]
+provides-extras = ["graph", "openai", "nvidia-nim", "watsonx", "snowflake-cortex", "deepinfra", "nebius", "baseten", "upstage", "reka", "hyperbolic", "friendli", "clarifai", "anthropic", "semantic", "colbert", "pdf", "visual", "wikipedia", "arxiv", "html", "web", "chroma", "faiss", "qdrant", "pinecone", "weaviate", "milvus", "lancedb", "sqlite-vec", "kuzu", "mesh", "cassandra", "firestore", "cosmos", "clickhouse", "turbopuffer", "azure-ai-search", "vertex-vector", "singlestore", "tidb", "couchbase", "surrealdb", "deeplake", "myscale", "duckdb-vector", "marqo", "opensearch", "vespa", "replicate", "ollama", "lmstudio", "vllm", "ai21", "cohere", "mistral", "gemini", "voyage", "jina", "nomic", "mixedbread", "bedrock", "gcal-tool", "gmail", "aws-lambda", "rss", "groq", "audio", "video", "voice", "voice-local", "voice-stream", "voice-piper", "voice-cartesia", "voice-elevenlabs", "voice-deepgram", "voice-silero", "training", "cron", "ambient", "excel", "pptx", "docx", "yaml", "okf", "teams", "http", "search", "huggingface", "transformers", "tiktoken", "google-search", "tavily", "youtube", "mcp", "redis", "memcached", "vertex", "cloudflare", "aleph-alpha", "llamacpp", "gpt4all", "onnx", "mlx", "edge", "ernie", "minimax", "serve", "hive", "graph-ui", "observe", "postgres", "pgvector", "wolfram", "dynamodb", "discord", "gcs", "bigquery", "gdrive", "asana", "box", "clickup", "databricks", "delta", "figma", "graphql", "iceberg", "kafka", "streaming-kafka", "streaming-pulsar", "streaming-kinesis", "streaming-cdc", "streaming", "linear", "monday", "shopify", "zoom", "git", "gsheets", "jira", "hubspot", "sql", "snowflake", "mongodb", "mongodb-vector", "salesforce", "azure", "s3", "onedrive", "slack", "supabase", "notion", "confluence", "dropbox", "symbolic", "rtf", "epub", "parquet", "elasticsearch", "browser", "computer-use", "youtube-transcript", "airtable", "performance", "all"]
 
 [package.metadata.requires-dev]
 bench = [
@@ -11266,6 +11361,7 @@ dev = [
     { name = "tzdata", specifier = ">=2024.1" },
 ]
 integration = [
+    { name = "aiohttp", specifier = ">=3.14.3" },
     { name = "asyncpg", specifier = ">=0.29" },
     { name = "azure-cosmos", specifier = ">=4.0" },
     { name = "azure-storage-blob", specifier = ">=12.0,<12.20" },

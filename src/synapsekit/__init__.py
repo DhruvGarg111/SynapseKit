@@ -195,6 +195,11 @@ from .dream import (
     TraceWindow,
 )
 from .embeddings.backend import SynapsekitEmbeddings
+from .embeddings.multimodal import (
+    BaseMultimodalEmbeddings,
+    ImageTextEmbeddings,
+    MultimodalEmbeddings,
+)
 from .evaluation import (
     EmailAlertSink,
     EvalCaseMeta,
@@ -356,6 +361,15 @@ from .loaders.sql import SQLLoader
 from .loaders.teams import TeamsLoader
 from .loaders.text import StringLoader, TextLoader
 from .loaders.tsv import TSVLoader
+from .loaders.visual import (
+    DefaultPageRenderer,
+    ImagePageRenderer,
+    PageRenderer,
+    PDFPageRenderer,
+    PowerPointPageRenderer,
+    VisualPage,
+    VisualPageRenderer,
+)
 from .loaders.web import WebLoader
 from .loaders.wikipedia import WikipediaLoader
 from .marketplace import (
@@ -447,6 +461,7 @@ from .prompts.hub import PromptHub
 from .prompts.template import ChatPromptTemplate, FewShotPromptTemplate, PromptTemplate
 from .provenance import GroundedSignal, SignalSource
 from .rag.facade import RAG
+from .rag.multimodal import MultimodalRAG
 from .rag.pipeline import RAGConfig, RAGPipeline
 from .rag.self_healing import SelfHealingRAG
 from .retrieval.adaptive import AdaptiveRAGRetriever
@@ -486,6 +501,7 @@ from .retrieval.self_rag import SelfRAGRetriever
 from .retrieval.sentence_window import SentenceWindowRetriever
 from .retrieval.step_back import StepBackRetriever
 from .retrieval.vectorstore import InMemoryVectorStore
+from .retrieval.visual import VisualDocumentRetriever, maxsim
 from .retrieval.voyage_reranker import VoyageReranker
 from .retrieval.world_model import (
     CausalLinker,
@@ -609,6 +625,7 @@ __all__ = [
     # Pipeline
     "RAGPipeline",
     "RAGConfig",
+    "MultimodalRAG",
     # LLM
     "AsyncLRUCache",
     "DynamoDBCacheBackend",
@@ -682,6 +699,11 @@ __all__ = [
     "VLLMLLM",
     # Embeddings
     "SynapsekitEmbeddings",
+    "BaseMultimodalEmbeddings",
+    "ImageTextEmbeddings",
+    "MultimodalEmbeddings",
+    "ColPaliEmbeddings",
+    "ColQwenEmbeddings",
     "ONNXEmbeddings",
     "OpenAIEmbeddings",
     "CohereEmbeddings",
@@ -695,6 +717,8 @@ __all__ = [
     # Vector stores
     "VectorStore",
     "InMemoryVectorStore",
+    "VisualDocumentRetriever",
+    "maxsim",
     "TurbopufferVectorStore",
     "AzureAISearchVectorStore",
     "VertexAIVectorStore",
@@ -929,6 +953,28 @@ __all__ = [
     "PubMedLoader",
     "SitemapLoader",
     "YouTubeLoader",
+    # Streaming ingestion
+    "AsyncEventSource",
+    "Checkpoint",
+    "CheckpointStore",
+    "DebeziumSource",
+    "InMemoryCheckpointStore",
+    "IngestionStats",
+    "KafkaSource",
+    "KinesisSource",
+    "KnowledgeMeshSink",
+    "PostgresCDCSource",
+    "PulsarSource",
+    "RedpandaSource",
+    "SQLiteCheckpointStore",
+    "StreamEvent",
+    "StreamCheckpoint",
+    "StreamSource",
+    "StreamingIngestor",
+    "VectorStoreSink",
+    "WorldModelSink",
+    "default_document_transform",
+    "normalize_debezium_event",
     # Parsers
     "JSONParser",
     "PydanticParser",
@@ -1225,6 +1271,13 @@ __all__ = [
     "AirtableLoader",
     "VideoLoader",
     "ImageLoader",
+    "VisualPage",
+    "PageRenderer",
+    "DefaultPageRenderer",
+    "ImagePageRenderer",
+    "PDFPageRenderer",
+    "PowerPointPageRenderer",
+    "VisualPageRenderer",
     "YAMLLoader",
     "DiscordLoader",
     "XMLLoader",
@@ -1380,6 +1433,8 @@ _LAZY_IMPORTS = {
     "NomicEmbeddings": "embeddings.nomic",
     "MixedbreadEmbeddings": "embeddings.mixedbread",
     "HuggingFaceEmbeddings": "embeddings.huggingface",
+    "ColPaliEmbeddings": "embeddings.colpali",
+    "ColQwenEmbeddings": "embeddings.colpali",
     # LLM providers
     "AsyncLRUCache": "llm._cache",
     "DynamoDBCacheBackend": "llm._cache_dynamodb",
@@ -1486,6 +1541,28 @@ _LAZY_IMPORTS = {
     "ElasticsearchLoader": "loaders.elasticsearch",
     "SitemapLoader": "loaders.sitemap",
     "YouTubeLoader": "loaders.youtube",
+    # Streaming ingestion
+    "AsyncEventSource": "streaming",
+    "Checkpoint": "streaming",
+    "CheckpointStore": "streaming",
+    "DebeziumSource": "streaming",
+    "InMemoryCheckpointStore": "streaming",
+    "IngestionStats": "streaming",
+    "KafkaSource": "streaming",
+    "KinesisSource": "streaming",
+    "KnowledgeMeshSink": "streaming",
+    "PostgresCDCSource": "streaming",
+    "PulsarSource": "streaming",
+    "RedpandaSource": "streaming",
+    "SQLiteCheckpointStore": "streaming",
+    "StreamEvent": "streaming",
+    "StreamCheckpoint": "streaming",
+    "StreamSource": "streaming",
+    "StreamingIngestor": "streaming",
+    "VectorStoreSink": "streaming",
+    "WorldModelSink": "streaming",
+    "default_document_transform": "streaming",
+    "normalize_debezium_event": "streaming",
     # Voice
     "VoicePipeline": "voice.pipeline",
     "AudioFrame": "voice.types",
