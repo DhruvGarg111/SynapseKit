@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib
+import logging
 import time
 from collections.abc import AsyncGenerator
 from typing import Any
@@ -18,6 +19,8 @@ from .finops import (
     PricingTable,
     RequestClassPolicy,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class _LegacyCostQualityRouter(BaseLLM):
@@ -784,18 +787,31 @@ class CostQualityRouter(BaseLLM):
             else None
         )
         if self._budget_ledger is not None:
-            self._budget_ledger.commit(
-                reservation,
-                cost,
-                model=model,
-                provider=provider,
-                input_tokens=input_tokens,
-                output_tokens=output_tokens,
-                tenant_id=tenant_id,
-                api_key_id=api_key_id,
-                request_class=request_class,
-                carbon_grams=carbon,
-            )
+            commit_kwargs: dict[str, Any] = {
+                "model": model,
+                "provider": provider,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "tenant_id": tenant_id,
+                "api_key_id": api_key_id,
+                "request_class": request_class,
+                "carbon_grams": carbon,
+            }
+            try:
+                self._budget_ledger.commit(reservation, cost, **commit_kwargs)
+            except BudgetExceededError as exc:
+                # The provider call already succeeded and cannot be undone —
+                # record the real spend (even though it breaches the cap)
+                # instead of discarding a response the caller already paid for.
+                logger.warning(
+                    "Budget settlement exceeded cap for %s/%s after a successful call; "
+                    "recording actual spend of $%.6f anyway: %s",
+                    provider,
+                    model,
+                    cost,
+                    exc,
+                )
+                self._budget_ledger.commit(reservation, cost, force=True, **commit_kwargs)
         self._selected_model = model
         self._last_route = f"{provider}/{model}"
         self._last_cost_usd = cost

@@ -462,7 +462,9 @@ async def test_router_rejects_unpriced_model_when_tenant_budget_is_enforced() ->
 
 
 @pytest.mark.asyncio
-async def test_router_generate_does_not_settle_actual_spend_over_a_hard_cap() -> None:
+async def test_router_generate_still_returns_response_when_actual_spend_settles_over_a_hard_cap() -> (
+    None
+):
     candidate = MockLLM("priced", provider="provider")
     ledger = BudgetLedger(tenant_budgets={"tenant-a": 0.001})
     router = CostQualityRouter(
@@ -482,16 +484,21 @@ async def test_router_generate_does_not_settle_actual_spend_over_a_hard_cap() ->
         ),
     )
 
-    with pytest.raises(BudgetExceededError):
-        await router.generate("hello", tenant_id="tenant-a", max_tokens=1)
+    # The provider call already succeeded by the time settlement discovers
+    # the actual cost overshoots the cap — the response must not be
+    # discarded, but the overage is still recorded against the ledger.
+    result = await router.generate("hello", tenant_id="tenant-a", max_tokens=1)
 
+    assert result == "ok"
     assert candidate.calls == 1
-    assert ledger.spend_usd(tenant_id="tenant-a") == 0.0
-    assert ledger.remaining_usd(tenant_id="tenant-a") == pytest.approx(0.001)
+    assert ledger.spend_usd(tenant_id="tenant-a") > 0.001
+    assert ledger.remaining_usd(tenant_id="tenant-a") == 0.0
 
 
 @pytest.mark.asyncio
-async def test_router_stream_does_not_settle_actual_spend_over_a_hard_cap() -> None:
+async def test_router_stream_still_yields_tokens_when_actual_spend_settles_over_a_hard_cap() -> (
+    None
+):
     candidate = MockLLM("priced", provider="provider")
     ledger = BudgetLedger(tenant_budgets={"tenant-a": 0.001})
     router = CostQualityRouter(
@@ -511,9 +518,9 @@ async def test_router_stream_does_not_settle_actual_spend_over_a_hard_cap() -> N
         ),
     )
 
-    with pytest.raises(BudgetExceededError):
-        _ = [token async for token in router.stream("hello", tenant_id="tenant-a", max_tokens=1)]
+    tokens = [token async for token in router.stream("hello", tenant_id="tenant-a", max_tokens=1)]
 
+    assert tokens == ["ok"]
     assert candidate.calls == 1
-    assert ledger.spend_usd(tenant_id="tenant-a") == 0.0
-    assert ledger.remaining_usd(tenant_id="tenant-a") == pytest.approx(0.001)
+    assert ledger.spend_usd(tenant_id="tenant-a") > 0.001
+    assert ledger.remaining_usd(tenant_id="tenant-a") == 0.0

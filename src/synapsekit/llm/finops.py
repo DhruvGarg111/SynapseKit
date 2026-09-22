@@ -460,8 +460,15 @@ class BudgetLedger:
         api_key_id: str | None = None,
         request_class: str | None = None,
         carbon_grams: float | None = None,
+        force: bool = False,
     ) -> SpendAttribution:
-        """Settle a reservation and append actual spend attribution."""
+        """Settle a reservation and append actual spend attribution.
+
+        ``force`` skips the settlement cap check. Use it to record real spend
+        for a call that already succeeded and cannot be undone (the response
+        was already delivered) even though its actual cost exceeded the
+        reservation's estimate and would otherwise blow the budget cap.
+        """
         if reservation.ledger is not self:
             raise ValueError("reservation is inactive or belongs to another ledger")
         amount = self._validate_amount(actual_cost)
@@ -473,7 +480,8 @@ class BudgetLedger:
         with self._lock:
             if not reservation.active:
                 raise ValueError("reservation is inactive or belongs to another ledger")
-            self._check_settlement_locked(reservation, amount)
+            if not force:
+                self._check_settlement_locked(reservation, amount)
             self._release_locked(reservation)
             reservation.active = False
             attribution = self._record_locked(
