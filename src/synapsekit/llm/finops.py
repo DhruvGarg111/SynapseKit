@@ -511,21 +511,23 @@ class BudgetLedger:
     ) -> SpendAttribution:
         """Record spend without a prior reservation."""
         amount = self._validate_amount(actual_cost)
+        tenant = str(tenant_id) if tenant_id is not None else None
+        key = str(api_key_id) if api_key_id is not None else None
         callbacks: list[BudgetAlert] = []
         with self._lock:
-            self._check_locked(amount, tenant_id, api_key_id)
+            self._check_locked(amount, tenant, key)
             attribution = self._record_locked(
                 amount,
                 model=model,
                 provider=provider,
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
-                tenant_id=tenant_id,
-                api_key_id=api_key_id,
+                tenant_id=tenant,
+                api_key_id=key,
                 request_class=request_class,
                 carbon_grams=carbon_grams,
             )
-            callbacks = self._new_alerts_locked(tenant_id, api_key_id)
+            callbacks = self._new_alerts_locked(tenant, key)
         self._notify(callbacks)
         return attribution
 

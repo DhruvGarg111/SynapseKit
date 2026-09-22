@@ -122,6 +122,31 @@ def test_budget_ledger_hard_caps_soft_alerts_and_attribution() -> None:
         ledger.check_before(0.3, tenant_id="tenant-a", api_key_id="key-a")
 
 
+def test_budget_ledger_record_spend_enforces_cap_for_non_string_identifiers() -> None:
+    ledger = BudgetLedger(tenant_budgets={"42": BudgetPolicy(limit_usd=1.0)})
+
+    ledger.record_spend(
+        0.9,
+        tenant_id=42,
+        model="cheap",
+        provider="test",
+        input_tokens=10,
+        output_tokens=5,
+    )
+
+    assert ledger.remaining_usd(tenant_id=42) == pytest.approx(0.1)
+    assert ledger.remaining_usd(tenant_id="42") == pytest.approx(0.1)
+    with pytest.raises(BudgetExceededError):
+        ledger.record_spend(
+            0.5,
+            tenant_id=42,
+            model="cheap",
+            provider="test",
+            input_tokens=10,
+            output_tokens=5,
+        )
+
+
 def _pricing() -> PricingTable:
     return PricingTable(
         [
